@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='Css/Admin_Doctor.css') }}"
+    />
+  </head>
+  <body>
+    <!-- Sidebar Navigation -->
+    <div class="side_bar">
+      <div class="logo"></div>
+      <ul class="nav_links">
+        <li class="active">
+          <a href="#"><i class="fas fa-user-md"></i> <span>Doctor</span></a>
+        </li>
+        <li class="logout">
+          <a href="#" id="logout-btn"
+            ><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a
+          >
+        </li>
+      </ul>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main_container">
+      <!-- Header -->
+      <div class="header">
+        <div class="header_title">Admin</div>
+        <div class="user_wrapper">
+          <ul class="user_actions">
+            <li>
+              <a href="#"><i class="fa fa-gear"></i></a>
+            </li>
+            <li>
+              <a href="#"><i class="fa fa-bell"></i></a>
+            </li>
+            <li><div class="profile_img"></div></li>
+            <li class="user_name">{{ name }} {{ lastName }}</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Body Content -->
+      <div class="container_body">
+        <div class="Doctor_List">
+          <header class="list_header">
+            <h1>Doctors List</h1>
+          </header>
+
+          <!-- Form Card -->
+          <div class="form-container card">
+            <form class="doctor-form" onsubmit="return false;">
+              <div class="form-row">
+                <input
+                  type="text"
+                  id="ID"
+                  name="ID"
+                  class="id-field"
+                  readonly
+                  placeholder="ID"
+                />
+                <input
+                  type="text"
+                  id="Name"
+                  name="Name"
+                  placeholder="Name"
+                  required
+                />
+                <input
+                  type="text"
+                  id="Last"
+                  name="Last"
+                  placeholder="Last name"
+                  required
+                />
+                <select required id="Gender" name="Gender">
+                  <option value="" selected disabled>Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+                <div class="date-input-wrapper">
+                  <input
+                    type="text"
+                    placeholder="Birthday"
+                    onfocus="(this.type='date')"
+                    onblur="if(!this.value)this.type='text';"
+                    required
+                    id="BirthDay"
+                    name="BirthDay"
+                  />
+                </div>
+              </div>
+              <div class="form-row">
+                <input
+                  type="text"
+                  id="Contact"
+                  name="Contact"
+                  placeholder="Phone or Email"
+                  required
+                />
+                <input
+                  type="text"
+                  id="Address"
+                  name="Address"
+                  class="address-field"
+                  placeholder="Address"
+                  required
+                />
+                <div class="password-wrapper">
+                  <input
+                    type="password"
+                    id="Password"
+                    name="Password"
+                    placeholder="Password"
+                    readonly
+                  />
+                  <i class="fa-solid fa-eye" id="togglePassword"></i>
+                </div>
+                <div class="action-buttons">
+                  <button id="Clear" type="button" class="btn btn-clear">
+                    <i class="fa-solid fa-eraser"></i> Clear
+                  </button>
+                  <button id="Add" type="button" class="btn btn-add">
+                    <i class="fa-solid fa-plus"></i> Add
+                  </button>
+                  <button id="Update" type="button" class="btn btn-update">
+                    <i class="fa-solid fa-check"></i> Update
+                  </button>
+                  <button id="Delete" type="button" class="btn btn-delete">
+                    <i class="fa-solid fa-trash"></i> Delete
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <!-- Table Card -->
+          <div class="table-container card">
+            <div class="table-controls">
+              <div class="entries-per-page">
+                <select id="entries-per-page">
+                  <option value="10">10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                </select>
+                <span>Entries Per Page</span>
+              </div>
+              <div class="search-bar">
+                <label for="search">Search:</label>
+                <input type="search" id="search" />
+              </div>
+            </div>
+
+            <div class="table-wrapper">
+              <table class="doctors-table">
+                <thead>
+                  <tr>
+                    <th data-column="ID">
+                      ID
+                      <span class="sort-icons"
+                        ><i class="fas fa-sort-up"></i
+                        ><i class="fas fa-sort-down"></i
+                      ></span>
+                    </th>
+                    <th data-column="Name">
+                      Name
+                      <span class="sort-icons"
+                        ><i class="fas fa-sort-up"></i
+                        ><i class="fas fa-sort-down"></i
+                      ></span>
+                    </th>
+                    <th data-column="Last">
+                      Last Name
+                      <span class="sort-icons"
+                        ><i class="fas fa-sort-up"></i
+                        ><i class="fas fa-sort-down"></i
+                      ></span>
+                    </th>
+                    <th data-column="Gender">
+                      Gender
+                      <span class="sort-icons"
+                        ><i class="fas fa-sort-up"></i
+                        ><i class="fas fa-sort-down"></i
+                      ></span>
+                    </th>
+                    <th data-column="BirthDay">
+                      Birthday
+                      <span class="sort-icons"
+                        ><i class="fas fa-sort-up"></i
+                        ><i class="fas fa-sort-down"></i
+                      ></span>
+                    </th>
+                    <th data-column="Contact">
+                      Phone Or Email
+                      <span class="sort-icons"
+                        ><i class="fas fa-sort-up"></i
+                        ><i class="fas fa-sort-down"></i
+                      ></span>
+                    </th>
+                    <th data-column="Address">
+                      Address
+                      <span class="sort-icons"
+                        ><i class="fas fa-sort-up"></i
+                        ><i class="fas fa-sort-down"></i
+                      ></span>
+                    </th>
+                    <th>Password</th>
+                    <th class="access-column">Global Access</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="no-data-row">
+                    <td colspan="9" class="no-data">Loading data...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="table-footer">
+              <div id="entries-info" class="entries-info">
+                Showing 0 to 0 of 0 entries
+              </div>
+              <div class="pagination">
+                <button id="prev-button" disabled>&laquo; Previous</button>
+                <button id="next-button" disabled>Next &raquo;</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="modal" class="modal-overlay">
+      <div class="modal-content">
+        <h2 id="modal-title">Notification</h2>
+        <p id="modal-message">This is a message.</p>
+        <div id="modal-buttons" class="modal-buttons">
+          <button id="modal-ok" class="btn btn-add">OK</button>
+        </div>
+      </div>
+    </div>
+    <script src="{{ url_for('static', filename='Js/Admin/Doctor.js') }}"></script>
+  </body>
+</html>

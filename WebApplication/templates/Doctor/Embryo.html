@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Doctor - Embryo Management</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='Css/Doctor_Embryo.css') }}"
+    />
+  </head>
+  <body>
+    <!-- Sidebar Navigation -->
+    <div class="side_bar">
+      <div class="logo"></div>
+      <ul class="nav_links">
+        <li class="active">
+          <a href="#"><i class="fas fa-microscope"></i> <span>Embryos</span></a>
+        </li>
+        <li class="logout">
+          <a href="#" id="logout-btn"
+            ><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a
+          >
+        </li>
+      </ul>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main_container">
+      <!-- Header -->
+      <div class="header">
+        <div class="header_title">Doctor</div>
+        <div class="user_wrapper">
+          <ul class="user_actions">
+            <li>
+              <a href="#"><i class="fa fa-gear"></i></a>
+            </li>
+            <li>
+              <a href="#"><i class="fa fa-bell"></i></a>
+            </li>
+            <li><div class="profile_img"></div></li>
+            <li class="user_name">John Doe</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Body Content -->
+      <div class="container_body">
+        <div class="Parent_List">
+          <header class="list_header">
+            <h1>Record List</h1>
+          </header>
+
+          <!-- Form Card for Adding/Editing -->
+          <div class="form-container card">
+            <form class="parent-form">
+              <!-- First Row: Image Analysis -->
+              <div class="form-row">
+                <h3>Image Analysis</h3>
+                <div class="frame-preview-container">
+                  <!-- Upload Section -->
+                  <div class="upload-section">
+                    <div class="upload-box" id="upload-box">
+                      <div class="upload-content">
+                        <i class="fa-solid fa-folder-open"></i>
+                        <p>Click to upload a folder</p>
+                      </div>
+                      <div id="thumbnail-strip" class="thumbnail-strip"></div>
+                    </div>
+                  </div>
+
+                  <!-- Preview Section -->
+                  <div class="preview-section" id="preview-section">
+                    <!-- Image Display -->
+                    <div class="image-viewer">
+                      <img
+                        id="current-image"
+                        src="https://placehold.co/400x300/f0f0f0/cccccc?text=Preview"
+                        alt="Current Frame"
+                      />
+                    </div>
+
+                    <!-- Frame Controls -->
+                    <div class="frame-controls">
+                      <div class="frame-info">
+                        <span id="frame-text">Frame 0 of 0</span>
+                        <select
+                          id="phase-selector"
+                          title="Change phase for ALL frames of this embryo"
+                        >
+                          <option value="N/A">N/A</option>
+                          <option value="tPNa">tPNa</option>
+                          <option value="tPNf">tPNf</option>
+                          <option value="t2">t2</option>
+                          <option value="t3">t3</option>
+                          <option value="t4">t4</option>
+                          <option value="t5">t5</option>
+                          <option value="t6">t6</option>
+                          <option value="t7">t7</option>
+                          <option value="t8">t8</option>
+                          <option value="tM">tM</option>
+                          <option value="tSB">tSB</option>
+                          <option value="tB">tB</option>
+                          <option value="tEB">tEB</option>
+                          <option value="tHB">tHB</option>
+                          <option value="Anomaly">Anomaly</option>
+                        </select>
+                        <div class="predict-controls">
+                          <button
+                            type="button"
+                            id="predict-button"
+                            class="btn btn-predict"
+                          >
+                            <i class="fa-solid fa-lightbulb"></i> Predict
+                          </button>
+                          <select id="predict-parameter">
+                            <option value="8">8</option>
+                            <option value="32">32</option>
+                          </select>
+                        </div>
+                        <div class="navigation-buttons">
+                          <button type="button" id="prev-btn" class="nav-btn">
+                            <i class="fas fa-step-backward"></i>
+                          </button>
+                          <button
+                            type="button"
+                            id="play-btn"
+                            class="nav-btn play-btn"
+                          >
+                            <i class="fas fa-play"></i>
+                          </button>
+                          <button type="button" id="next-btn" class="nav-btn">
+                            <i class="fas fa-step-forward"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Second Row: Grading -->
+              <div class="form-row">
+                <h3>Grading</h3>
+                <div class="grading-group">
+                  <select id="blastocyste-grade1" class="grade-select">
+                    <option value="">Expansion Stage</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                  </select>
+                  <select id="blastocyste-grade2" class="grade-select">
+                    <option value="">Inner Cell Mass (ICM)</option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                  </select>
+                  <select id="blastocyste-grade3" class="grade-select">
+                    <option value="">Trophectoderm (TE)</option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                  </select>
+                </div>
+                <select id="pgta-select" class="grade-select">
+                  <option value="">PGT-A</option>
+                  <option value="Euploid">Euploid</option>
+                  <option value="Aneuploid">Aneuploid</option>
+                </select>
+                <select id="live-birth-select" class="grade-select">
+                  <option value="">Live Birth</option>
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
+                </select>
+              </div>
+
+              <!-- Second Row: Record Information -->
+              <div class="form-row">
+                <h3>Record Information</h3>
+                <input
+                  type="text"
+                  id="Parent_ID"
+                  class="id-field"
+                  placeholder="ID"
+                  readonly
+                  title="Record ID (auto-generated)"
+                />
+                <input type="date" id="Record_Date" readonly required />
+                <input
+                  type="text"
+                  id="Parent_Contact"
+                  placeholder="Phone or Email"
+                  required
+                />
+              </div>
+
+              <!-- Fourth Row: Action Buttons -->
+              <div class="form-row">
+                <div class="action-buttons">
+                  <button type="button" id="Clear" class="btn btn-clear">
+                    <i class="fa-solid fa-eraser"></i> Clear
+                  </button>
+                  <button type="button" id="Add" class="btn btn-add">
+                    <i class="fa-solid fa-plus"></i> Add
+                  </button>
+                  <button type="button" id="Update" class="btn btn-update">
+                    <i class="fa-solid fa-check"></i> Update
+                  </button>
+                  <button type="button" id="Delete" class="btn btn-delete">
+                    <i class="fa-solid fa-trash"></i> Delete
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <!-- Table Card for Displaying Data -->
+          <div class="table-container card">
+            <div class="table-controls">
+              <div class="entries-per-page">
+                <select id="entries-per-page">
+                  <option value="10">10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                </select>
+                <span>Entries Per Page</span>
+              </div>
+              <div class="search-bar">
+                <label for="search">Search:</label>
+                <input type="search" id="search" />
+              </div>
+            </div>
+            <div class="table-wrapper">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th data-column="parentId">
+                      ID
+                      <div class="sort-icons">
+                        <i class="fas fa-sort-up"></i
+                        ><i class="fas fa-sort-down"></i>
+                      </div>
+                    </th>
+                    <th data-column="studentDate">
+                      Date
+                      <div class="sort-icons">
+                        <i class="fas fa-sort-up"></i
+                        ><i class="fas fa-sort-down"></i>
+                      </div>
+                    </th>
+                    <th data-column="parentContact">
+                      Contact
+                      <div class="sort-icons">
+                        <i class="fas fa-sort-up"></i
+                        ><i class="fas fa-sort-down"></i>
+                      </div>
+                    </th>
+                    <th data-column="grading">
+                      Grading
+                      <div class="sort-icons">
+                        <i class="fas fa-sort-up"></i
+                        ><i class="fas fa-sort-down"></i>
+                      </div>
+                    </th>
+                    <th data-column="aneuploidy">
+                      PGT-A
+                      <div class="sort-icons">
+                        <i class="fas fa-sort-up"></i
+                        ><i class="fas fa-sort-down"></i>
+                      </div>
+                    </th>
+                    <th data-column="live_birth">
+                      Live Birth
+                      <div class="sort-icons">
+                        <i class="fas fa-sort-up"></i
+                        ><i class="fas fa-sort-down"></i>
+                      </div>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="no-data-row">
+                    <td colspan="6" class="no-data">
+                      No Data Available in Table
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="table-footer">
+              <div id="entries-info">Showing 0 to 0 of 0 entries</div>
+              <div class="pagination">
+                <button type="button" id="prev-button" disabled>
+                  &laquo; Previous
+                </button>
+                <button type="button" id="next-button" disabled>
+                  Next &raquo;
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal for confirmations and notifications -->
+    <div id="modal" class="modal-overlay">
+      <div class="modal-content">
+        <h2 id="modal-title">Notification</h2>
+        <p id="modal-message">This is a message.</p>
+        <div id="modal-buttons" class="modal-buttons">
+          <button id="modal-ok" class="btn btn-add">OK</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='Js/Doctor/Embryo.js') }}"></script>
+  </body>
+</html>

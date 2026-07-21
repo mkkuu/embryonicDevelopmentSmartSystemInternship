@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Embryo Analysis System - Login</title>
+
+    <!-- Preconnect to external domains for better performance -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome for icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+
+    <!-- Custom CSS -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='Css/Login.css') }}"
+    />
+  </head>
+  <body>
+    <!-- 
+    ========================================
+    LOGIN PAGE STRUCTURE
+    ========================================
+    
+    This login page provides a professional authentication interface for the 
+    Embryo Analysis System. It features:
+    
+    - Responsive design that works on desktop and mobile
+    - Beautiful image background with welcome overlay
+    - Accessible form with proper ARIA labels
+    - Real-time validation and error handling
+    - Remember me functionality
+    - Password visibility toggle
+    
+    Layout:
+    - Left side (60%): Background image with welcome text overlay
+    - Right side (40%): Login form with inputs and controls
+    -->
+
+    <div class="container">
+      <!-- 
+      VISUAL SECTION
+      - Displays background image with gradient overlay
+      - Contains welcome message and branding
+      - Responsive: stacks on mobile devices
+      -->
+      <div
+        class="login-visual"
+        role="img"
+        aria-label="Embryo analysis system background"
+      >
+        <div class="login-overlay">
+          <div class="welcome-content">
+            <h2>Welcome to Embryo Analysis System</h2>
+            <p>Advanced AI-powered embryo development analysis</p>
+            <p>Developed In The ISEN Laboratory</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 
+       LOGIN FORM SECTION
+       - Contains all authentication inputs and controls
+       - Features accessible form elements with proper labels
+       - Includes error message display area
+       - Responsive: full width on mobile
+       -->
+      <main class="login-form">
+        <div class="form-header">
+          <h1>Sign In</h1>
+          <p class="form-subtitle">Access your account to continue</p>
+        </div>
+
+        <!-- 
+         LOGIN FORM
+         - Uses novalidate to handle custom validation
+         - All inputs have proper accessibility attributes
+         - Form submission handled by JavaScript
+         -->
+        <form id="loginForm" novalidate>
+          <!-- 
+           USERNAME INPUT
+           - Required field with autocomplete
+           - Accessible with screen reader support
+           - Real-time validation on input
+           -->
+          <div class="input-group">
+            <label for="userName" class="sr-only">Username</label>
+            <i class="fas fa-user input-icon" aria-hidden="true"></i>
+            <input
+              type="text"
+              id="userName"
+              name="username"
+              placeholder="Enter your username"
+              autocomplete="username"
+              required
+              aria-describedby="username-error"
+            />
+          </div>
+
+          <!-- 
+           PASSWORD INPUT
+           - Required field with autocomplete
+           - Includes password visibility toggle
+           - Accessible with proper ARIA labels
+           -->
+          <div class="input-group">
+            <label for="passWord" class="sr-only">Password</label>
+            <i class="fas fa-lock input-icon" aria-hidden="true"></i>
+            <input
+              type="password"
+              id="passWord"
+              name="password"
+              placeholder="Enter your password"
+              autocomplete="current-password"
+              required
+              aria-describedby="password-error"
+            />
+            <!-- 
+             PASSWORD VISIBILITY TOGGLE
+             - Button to show/hide password
+             - Accessible with proper ARIA labels
+             - Keyboard navigation support
+             -->
+            <button
+              type="button"
+              class="toggle-password"
+              id="togglePassword"
+              aria-label="Toggle password visibility"
+              tabindex="0"
+            >
+              <i class="fas fa-eye" aria-hidden="true"></i>
+            </button>
+          </div>
+
+          <!-- 
+           REMEMBER ME CHECKBOX
+           - Optional feature to remember username
+           - Stores preference in localStorage
+           - 30-day expiration
+           -->
+          <div class="remember-me">
+            <input type="checkbox" id="rememberMe" name="rememberMe" />
+            <label for="rememberMe">Remember me for 30 days</label>
+          </div>
+
+          <!-- 
+           LOGIN BUTTON
+           - Submits form and handles authentication
+           - Shows loading state during submission
+           - Disabled during processing
+           -->
+          <button type="submit" id="loginButton" class="login-btn">
+            <span class="btn-text">Sign In</span>
+            <span class="btn-loading" aria-hidden="true">
+              <i class="fas fa-spinner fa-spin"></i>
+              Signing In...
+            </span>
+          </button>
+
+          <!-- 
+           ERROR MESSAGE AREA
+           - Displays validation and authentication errors
+           - Accessible with ARIA live region
+           - Auto-clears on user input
+           -->
+          <div
+            id="errorMessage"
+            class="error-message"
+            role="alert"
+            aria-live="polite"
+          ></div>
+        </form>
+      </main>
+    </div>
+
+    <!-- 
+    JAVASCRIPT FUNCTIONALITY
+    - Handles form validation and submission
+    - Manages password visibility toggle
+    - Implements remember me functionality
+    - Provides real-time error feedback
+    -->
+    <script src="{{ url_for('static', filename='Js/Login.js') }}"></script>
+  </body>
+</html>

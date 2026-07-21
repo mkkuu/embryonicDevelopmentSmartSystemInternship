@@ -1,0 +1,18 @@
+# Ignore datasets
+Data/
+
+# Ignore cached embeddings (regenerable via Training/embeddings/build_cache.py)
+Embeddings/
+
+# Ignore model checkpoints
+Models/
+
+# Ignore Python cache
+__pycache__/
+*.pyc
+
+.vscode/
+docs/
+.claude/
+CLAUDE.md
+deploy2GPUServ.sha
