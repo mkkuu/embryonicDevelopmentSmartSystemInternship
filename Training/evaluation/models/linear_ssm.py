@@ -183,7 +183,17 @@ class LinearStateSpaceModel(Model):
 
         ridge = Ridge(alpha=self._ridge_alpha, fit_intercept=True)
         ridge.fit(Z_cur, Z_next)
-        self._A = torch.from_numpy(ridge.coef_.astype(np.float32))
+        # sklearn's Ridge.coef_ is documented as shape (n_targets, n_features)
+        # for multi-output regression, but degenerates to 1D (n_features,)
+        # whenever n_targets == 1 — i.e. whenever the latent/state dimension
+        # d == 1 (confirmed empirically against the installed sklearn 1.7.2).
+        # A is always the square (d, d) transition matrix by construction
+        # (z_current and z_next both live in the same d-dimensional latent
+        # space), so reshape restores that contract uniformly for every d,
+        # including d == 1 — this is what _safe_invert/_apply_dynamics and
+        # every shape-asserting test in this package already assume.
+        d = Z_cur.shape[1]
+        self._A = torch.from_numpy(ridge.coef_.reshape(d, d).astype(np.float32))
         self._b = torch.from_numpy(ridge.intercept_.astype(np.float32))
         self._A_inv = self._safe_invert(self._A)
 
@@ -228,6 +238,14 @@ class LinearStateSpaceModel(Model):
         if self._pca is not None:
             state["pca_components"] = self._pca.components_.tolist()
             state["pca_mean"] = self._pca.mean_.tolist()
+            # sklearn's PCA.transform() reads explained_variance_ (via
+            # get_namespace) on every call, even though it's arithmetically
+            # unused for whiten=False (the only mode this class uses) — its
+            # absence after a manual load() raises AttributeError before any
+            # actual computation happens. Empirically confirmed sufficient
+            # (transform()/inverse_transform() match the pre-save model
+            # exactly) alongside the fields already serialized below.
+            state["pca_explained_variance"] = self._pca.explained_variance_.tolist()
         if self._A is not None:
             state["A"] = self._A.tolist()
             state["b"] = self._b.tolist()
@@ -248,6 +266,7 @@ class LinearStateSpaceModel(Model):
             pca = PCA(n_components=components.shape[0])
             pca.components_ = components
             pca.mean_ = np.asarray(state["pca_mean"])
+            pca.explained_variance_ = np.asarray(state["pca_explained_variance"])
             pca.n_components_ = components.shape[0]
             pca.n_features_in_ = components.shape[1]
             model._pca = pca

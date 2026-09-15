@@ -155,7 +155,7 @@ def test_fit_with_single_class_falls_back_to_base_rate_without_crashing():
     assert model._logreg is None
     predictions = model.predict(trajectories)
     for pred in predictions:
-        assert torch.all(pred.consistency_flag_prob == pytest.approx(0.0))
+        assert pred.consistency_flag_prob.tolist() == pytest.approx([0.0] * len(pred.consistency_flag_prob))
 
 
 # --------------------------------------------------------------------------

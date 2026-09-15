@@ -140,7 +140,7 @@ def test_impute_last_window_uses_forward_only_when_uninvertible():
     traj = make_trajectory("v1", embeddings=[[5.0], [10.0], [10.0]], consistency_flags=[0, 0, 0])
     imputed = model.impute_missing_window(traj, missing_index=2)  # last window, no forward-only fallback possible via backward
     # only the forward estimate (from window 1) is available: A@10 + b = 0 + 1 = 1
-    torch.testing.assert_close(imputed, torch.tensor([1.0]), atol=1e-4)
+    torch.testing.assert_close(imputed, torch.tensor([1.0]), atol=1e-4, rtol=1e-4)
 
 
 def test_impute_only_window_raises():
@@ -151,6 +151,28 @@ def test_impute_only_window_raises():
     traj = make_trajectory("v1", embeddings=[[1.0]], consistency_flags=[0])
     with pytest.raises(ValueError):
         model.impute_missing_window(traj, missing_index=0)
+
+
+def test_fit_with_state_dimension_one_produces_2d_A():
+    """Regression test for a shape bug: sklearn's Ridge.coef_ degenerates to
+    a 1D array of shape (n_features,) instead of (n_targets, n_features)
+    whenever n_targets == 1, i.e. whenever the latent/state dimension is 1
+    (scalar embeddings, or latent_dim=1). fit() must normalize this back to
+    the (d, d) = (1, 1) matrix contract the rest of the class assumes, so
+    that _safe_invert (which requires a >=2D array) and downstream
+    predict()/impute_missing_window() don't crash."""
+    true_A = np.array([[0.5]])
+    true_b = np.array([0.0])
+    traj = make_linear_trajectory("v1", true_A, true_b, [1.0], n_steps=5)
+
+    model = LinearStateSpaceModel(latent_dim=None, ridge_alpha=1e-6)
+    model.fit([traj])
+
+    assert model._A.shape == (1, 1)
+    assert model._b.shape == (1,)
+    # _safe_invert must not raise on a well-conditioned 1x1 matrix.
+    assert model._A_inv is not None
+    assert model._A_inv.shape == (1, 1)
 
 
 # --------------------------------------------------------------------------
@@ -241,7 +263,7 @@ def test_fit_with_single_class_falls_back_to_base_rate_without_crashing():
     assert model._logreg is None
     predictions = model.predict(trajectories)
     for pred in predictions:
-        assert torch.all(pred.consistency_flag_prob == pytest.approx(0.0))
+        assert pred.consistency_flag_prob.tolist() == pytest.approx([0.0] * len(pred.consistency_flag_prob))
 
 
 # --------------------------------------------------------------------------
@@ -283,12 +305,18 @@ def test_save_load_round_trip_with_pca(tmp_path):
     model = LinearStateSpaceModel(latent_dim=2)
     model.fit(trajectories)
     predictions_before = model.predict(trajectories)
+    # forecast() round-trips through _to_embedding -> pca.inverse_transform,
+    # the other PCA code path besides predict()'s _to_latent -> pca.transform
+    # — both must survive save/load, not just one.
+    forecast_before = model.forecast(trajectories[0], steps=2)
 
     model.save(tmp_path)
     reloaded = LinearStateSpaceModel.load(tmp_path)
     assert reloaded._pca is not None
     assert reloaded._A.shape == (2, 2)
     predictions_after = reloaded.predict(trajectories)
+    forecast_after = reloaded.forecast(trajectories[0], steps=2)
 
     for pred_before, pred_after in zip(predictions_before, predictions_after):
         torch.testing.assert_close(pred_before.consistency_flag_prob, pred_after.consistency_flag_prob, atol=1e-4, rtol=1e-4)
+    torch.testing.assert_close(forecast_before, forecast_after, atol=1e-4, rtol=1e-4)
