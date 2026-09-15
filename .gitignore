@@ -16,3 +16,8 @@ docs/
 .claude/
 CLAUDE.md
 deploy2GPUServ.sha
+# Local secrets / environment files (never commit; see WebApplication/.env.example)
+.env
+*.env
+!*.env.example
+WebApplication/.env
