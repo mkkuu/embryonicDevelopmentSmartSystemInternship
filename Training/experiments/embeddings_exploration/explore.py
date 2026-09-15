@@ -15,7 +15,7 @@ on the GPU server, not a desktop with a display.
 Usage
 -----
     cd Training
-    python -m embeddings.explore --cache_root ../Embeddings --model_name resnet18 \\
+    python -m experiments.embeddings_exploration.explore --cache_root ../Embeddings --model_name resnet18 \\
         --split val --output_dir ../Embeddings/resnet18/exploration
 """
 
@@ -38,7 +38,7 @@ from sklearn.manifold import TSNE
 from sklearn.metrics import adjusted_rand_score, normalized_mutual_info_score
 from sklearn.neighbors import NearestNeighbors
 
-from .cache import EmbeddingCache
+from embeddings.cache import EmbeddingCache
 
 
 def parse_args() -> argparse.Namespace:

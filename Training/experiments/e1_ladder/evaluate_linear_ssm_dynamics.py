@@ -17,7 +17,7 @@ Reports, on the test split:
 Usage
 -----
     cd Training
-    python -m evaluation.evaluate_linear_ssm_dynamics \\
+    python -m experiments.e1_ladder.evaluate_linear_ssm_dynamics \\
         --cache_root ../Embeddings --embedding_model_name resnet18 \\
         --latent_dim 16 --max_steps 5
 """

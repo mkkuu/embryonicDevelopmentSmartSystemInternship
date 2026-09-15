@@ -1,507 +1,199 @@
-<div align="center">
+# embryonicDevelopmentSciMLExtension
 
-<img src="Ressources/LabISEN.png" alt="ISEN Logo" width="170"/>
+Detection of developmental-stage transitions in human embryo time-lapse videos, extended with
+a scientific-machine-learning study of the temporal dynamics behind those transitions and a
+local, grounded question-answering application over the resulting models.
 
-# Spatio-Temporal Transformers for High-Accuracy Detection of Embryo Developmental Transitions
+This README is the entry point for a newcomer. It says what exists, what has been established,
+what is legacy, and where to go next. Detailed guides live in `docs/` (see §12).
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/)
-[![PyTorch](https://img.shields.io/badge/PyTorch-1.9+-red.svg)](https://pytorch.org/)
+## 1. Purpose
 
-</div>
+Two things live in this repository:
 
-A comprehensive system for analyzing embryo developmental transitions using state-of-the-art deep learning models, featuring both training capabilities and a web-based application for real-time analysis.
+1. **The original classifier** (`Training/*.py`, `WebApplication/`, July 2026): ResNet18 /
+   TimeSformer models that detect, in an 8-frame window of a time-lapse video, whether a
+   developmental transition occurs, plus a Flask + PostgreSQL application for doctors and
+   administrators. Paper reference in §13.
+2. **The SciML extension** (everything under `Training/{embeddings, evaluation, rag,
+   orchestrator, validator, reporting, webapp_api}/`, `Tests/`, `docs/`, July–September 2026):
+   it caches the classifier's embeddings, asks whether *explicit temporal-dynamics modelling*
+   adds anything to frame-independent classification, builds a hidden-Markov / semi-Markov
+   model of the developmental phase on top of the embeddings, serves that model through a
+   read-only API, and lets a local language model answer questions about one embryo's
+   trajectory with every number grounded in the served data and every scientific claim
+   checked against one external reference (the Istanbul Consensus 2025).
 
-## 🧬 Project Overview
+## 2. Scientific objective
 
-This project provides a complete solution for embryo developmental transition detection, combining:
+The programme's question (`docs/SCIENTIFIC_BACKGROUND.md` §1): is embryo development, as seen
+in time-lapse imaging, governed by a shared low-dimensional dynamical law, and do the discrete
+clinical phases reflect that law? The gating hypothesis **H1** — "explicit dynamics beats
+frame-independent classification" — was tested first and is **not supported** on this dataset:
+the embedding content alone reaches AUROC 0.738 on the transition target, and neither fixed,
+learned-linear nor GRU dynamics add to it once a frame-shuffle control is applied. The
+phase-as-hidden-state branch (HMM, then Semi-HMM with explicit phase durations) reaches AUROC
+≈ 0.64 on validation with poor calibration; the Semi-HMM is the model served today.
 
-- **Training Pipeline**: Advanced deep learning models (ResNet18, TimeSformer) for embryo analysis
-- **Web Application**: Flask-based interface for real-time embryo management and AI-powered predictions
-- **Database Integration**: PostgreSQL backend for secure data management
-- **File Management**: Organized storage system for embryo images and annotations
+Throughout the code and the documentation, five kinds of statement are kept apart and labelled:
 
-## 📁 Project Structure
+| Label | Meaning | Example |
+|---|---|---|
+| OBSERVED | an annotation of the dataset | "the annotated phase at window 156 is t4" |
+| MODEL-DERIVED | a prediction or estimate of the Semi-HMM | "the model's most likely phase is t7" |
+| DERIVED | a deterministic computation on observations or predictions | "last annotated transition before this window: t4 → t6" |
+| SCIENTIFIC | external knowledge (Istanbul Consensus 2025) | phase order, morphology vocabulary |
+| LIMITATION | a field of the context that bounds the answer | `time_unit = unknown/unverified` |
+
+A model output presented as an observation is the central failure mode this project measures
+and guards against.
+
+## 3. Current architecture
 
 ```
-Spatio-Temporal-Transformers-for-High-Accuracy-Detection-of-Embryo-Developmental-Transitions/
-├── Training/                    # Deep learning training pipeline
-│   ├── train.py                # Main training script
-│   ├── DataSet.py              # Custom dataset implementation
-│   ├── ModelBuilder.py         # Model architecture definitions
-│   ├── config_args.py          # Configuration management
-│   └── preProcess.py           # Data preprocessing utilities
-├── WebApplication/             # Flask web application
-│   ├── app.py                  # Main Flask application
-│   ├── Classes/                # Business logic classes
-│   ├── Routes/                 # API endpoints
-│   ├── static/                 # Frontend assets (CSS, JS)
-│   ├── templates/              # HTML templates
-│   └── Dataset_shema.sql       # Database schema
-├── Configs/                    # Configuration files
-│   └── config.ini             # Training configuration
-├── Data/                      # Dataset storage (extracted here)
-├── Results/                   # Model checkpoints and results
-├── requirements.txt           # Python dependencies
-└── README.md                  # This file
+Browser → Training/webapp_api (BFF, Flask :8001)
+            ├─ Training/reporting   read-only inference on the frozen Semi-HMM (in-process; also standalone on :8000)
+            └─ Training/orchestrator.answer_question()
+                 router (keywords) → tools (reporting + RAG retrieval over 30 project docs, Chroma)
+                 → temporal context → context builder (labelled blocks) → local LLM via Ollama
+                 → grounding check (presence of every value) → Scientific Validator (Istanbul corpus, rules R1–R14)
 ```
 
-## 🚀 Quick Start
+Scientific components behind it: `Training/embeddings/` (cached ResNet18 embeddings),
+`Training/evaluation/` (model interface, bootstrap harness, the seven models),
+`Training/experiments/` (the runners that produced every result), the frozen artefacts under
+`Results/` on the GPU server. Full description: `docs/ARCHITECTURE.md`.
 
-### 1. Environment Setup
+## 4. Repository structure
 
-Create and activate a conda environment:
+| Path | Role |
+|---|---|
+| `Training/` | original pipeline (`preProcess.py`, `train.py`, `train_balanced.py`, `DataSet.py`, `ModelBuilder.py`, …) and the SciML packages listed above (production and scientific libraries only) |
+| `Training/experiments/` | every experiment and benchmark runner, grouped by experiment (`e1_ladder/`, `gru/`, `hmm_semi_hmm/`, `llm_regression/`, `context_ablations/`, `rag_llm_diagnostics/`, …) with an index README; `archive/` holds the one-off scripts salvaged from the server. Nothing here is used by the application |
+| `Tests/` | 74 test files / 1 211 tests mirroring the SciML packages, synthetic data only, plus 4 Node tests for the frontend |
+| `Configs/config.ini` | training configuration of the original pipeline; **not read on Linux** because of a Windows path bug, kept for the record |
+| `Results/` | gitignored; exists only on the GPU server: checkpoints, frozen HMM/Semi-HMM, every experiment and benchmark artefact |
+| `Ressources/` | logos and the Istanbul Consensus 2025 PDF from which the corpus was transcribed |
+| `docs/` | the guides below, the 30 documents that form the RAG corpus (frozen names), `corpus/` (Istanbul transcription), `reference/`, `archive/` |
+| `WebApplication/` | the original doctor/admin Flask application — **legacy**, see §11 |
+| `deploy2GPUServ.sh` | rsync of the code to the GPU server (excludes data, results, `docs/`) |
 
-```bash
-# Create conda environment with Python 3.10
-conda create -n embryo_env python=3.10
+Also gitignored and server-only: `Data/` (dataset), `Embeddings/`, `RagIndex/` (vector index),
+`Cache/` (inference cache).
 
-# Activate environment
-conda activate embryo_env
-
-# Install dependencies
-pip install -r requirements.txt
-```
-
-### 2. Database Setup
-
-The project uses **PostgreSQL** as the database backend. Follow these steps to set up the database:
-
-#### Install PostgreSQL
-
-```bash
-# Windows (using Chocolatey)
-choco install postgresql
-
-# macOS (using Homebrew)
-brew install postgresql
-
-# Ubuntu/Debian
-sudo apt-get install postgresql postgresql-contrib
-```
-
-#### Create Database and Run Schema
-
-```bash
-# Connect to PostgreSQL as superuser
-psql -U postgres
-
-# Create database
-CREATE DATABASE embryo_db;
-
-# Create user (optional)
-CREATE USER embryo_user WITH PASSWORD 'your_password';
-
-# Grant privileges
-GRANT ALL PRIVILEGES ON DATABASE embryo_db TO embryo_user;
-
-# Exit psql
-\q
-
-# Run the database schema
-psql -U postgres -d embryo_db -f WebApplication/Dataset_shema.sql
-```
-
-#### Environment Configuration
-
-Create a `.env` file in the `WebApplication/` directory with your database credentials:
-
-```bash
-# Create .env file in WebApplication directory
-cd WebApplication
-touch .env
-```
-
-Add your database credentials to the `.env` file:
-
-```env
-# Database Configuration
-host=localhost
-database=embryo_db
-user=embryo_user
-password=your_password
-port=5432
-
-# Application Configuration
-EMBRYO_IMAGES_PATH=C:/Embryo_images
-SECRET_KEY=your-secret-key-here
-```
-
-**Important**: Replace the credentials with your actual PostgreSQL setup:
-
-- `host`: Your PostgreSQL server host (usually `localhost`)
-- `database`: Database name (use `embryo_db` or your preferred name)
-- `user`: Your PostgreSQL username
-- `password`: Your PostgreSQL password
-- `port`: PostgreSQL port (default: `5432`)
-
-### 3. Data Preparation
-
-Extract the embryo dataset to the Data folder and run preprocessing:
-
-```bash
-# Extract dataset (replace with actual dataset path)
-tar -xzf embryo_dataset.tar.gz -C Data/
-
-# Run preprocessing
-cd Training
-python preProcess.py
-```
-
-### 4. Configuration
-
-The system uses `Configs/config.ini` for training configuration:
-
-```ini
-[data]
-data_loader = image_seq    # Data loader type (image_seq/video)
-window_size = 8           # Sequence window size
-stride = 1               # Sliding window stride
-
-[model]
-name = resnet18          # Model architecture (resnet18/timesformer)
-pretrained = True        # Use pretrained weights
-
-[training]
-batch_size = 1           # Training batch size
-epochs = 100             # Number of training epochs
-learning_rate = 0.001    # Learning rate
-num_workers = 8          # Data loading workers
-image_size = 224         # Input image size
-```
-
-## 🎯 Training Pipeline
-
-### Basic Training
-
-Train a model with default configuration:
+## 5. Current application
 
 ```bash
 cd Training
-python train.py
+python -m reporting.warm_cache --split val      # optional, pre-fills the inference cache
+python -m webapp_api.app                        # http://localhost:8001
 ```
 
-### Advanced Training with Custom Parameters
+Endpoints of the BFF (verified in `Training/webapp_api/app.py`): `GET /`, `/health`, `/videos`,
+`/videos/<id>`, `/videos/<id>/timeline`, `/videos/<id>/window/<w>`,
+`/videos/<id>/window/<w>/frame?which=first|last`, `/questions`, `POST /chat` with
+`{question | question_id, video_id, window, split}`. `split` defaults to `val`; `test` is
+refused with 403 everywhere. Requires the frozen Semi-HMM, the embeddings, the images, the
+vector index and an Ollama service with the model named by `LLM_MODEL` (default
+`llama3.2:latest`). The standalone Reporting API (`python -m reporting.api`, port 8000) exposes
+the same inference without the language model.
 
-Override configuration parameters via command line:
-
-```bash
-# Train ResNet18 with custom parameters
-python train.py --model_name resnet18 --batch_size 16 --epochs 50 --learning_rate 0.0001
-
-# Train TimeSformer for 32-frame sequences
-python train.py --model_name timesformer --window_size 32 --batch_size 8 --epochs 100
-
-```
-
-### Training Arguments Explained
-
-| Argument          | Description            | Default  | Example               |
-| ----------------- | ---------------------- | -------- | --------------------- |
-| `--model_name`    | Model architecture     | resnet18 | resnet18, timesformer |
-| `--batch_size`    | Training batch size    | 1        | 16, 32, 64            |
-| `--epochs`        | Training epochs        | 100      | 50, 100, 200          |
-| `--learning_rate` | Learning rate          | 0.001    | 0.0001, 0.001, 0.01   |
-| `--window_size`   | Sequence window size   | 8        | 8, 16, 32             |
-| `--stride`        | Sliding window stride  | 1        | 1, 2, 4               |
-| `--num_workers`   | Data loading workers   | 8        | 4, 8, 16              |
-| `--image_size`    | Input image size       | 224      | 224, 256, 512         |
-| `--pretrained`    | Use pretrained weights | True     | True, False           |
-
-### Model Selection
-
-- **ResNet18**: Best for 8-frame sequences, faster training
-- **TimeSformer**: Best for 32-frame sequences, higher accuracy
-
-## 🌐 Web Application
-
-### Starting the Web Application
-
-1. **Configure Environment Variables**:
-   The `.env` file should already be created during database setup. If not, create it:
-
-   ```bash
-   cd WebApplication
-   touch .env
-   ```
-
-   Add your PostgreSQL credentials to the `.env` file:
-
-   ```env
-   # Database Configuration
-   host=localhost
-   database=embryo_db
-   user=your_username
-   password=your_password
-   port=5432
-
-   # Application Configuration
-   EMBRYO_IMAGES_PATH=C:/Embryo_images
-   SECRET_KEY=your-secret-key-here
-   ```
-
-2. **Run Flask Application**:
-
-   ```bash
-   cd WebApplication
-   flask run
-   ```
-
-3. **Access Application**: Open browser to `http://127.0.0.1:5000`
-
-### Web Application Features
-
-#### 🔐 Authentication System
-
-- **Admin Users**: Manage doctor accounts and system settings
-- **Doctor Users**: Manage embryo records and run AI predictions
-- **Session-based authentication** with secure cookies
-
-#### 👨‍⚕️ Doctor Interface (`/Doctor/Embryo`)
-
-- **Embryo Management**: Add, update, delete embryo records
-- **Image Upload**: Drag-and-drop interface for embryo images
-- **Frame Preview**: Thumbnail-based frame navigation
-- **Phase Annotation**: Dropdown-based phase selection system
-- **AI Prediction**: Real-time developmental transition prediction
-- **CSV Export**: Automatic annotation file generation
-
-#### 👨‍💼 Admin Interface (`/Admin/Doctor`)
-
-- **Doctor Management**: CRUD operations for doctor accounts
-- **Access Control**: Global access permission management
-- **System Monitoring**: User activity and system status
-
-#### 🤖 AI Prediction System
-
-- **Model Selection**: Automatic selection based on frame count
-  - 8 frames → ResNet18 model
-  - 32 frames → TimeSformer model
-- **Visual Indicators**: Color-coded prediction results
-  - 🔵 Blue circle: No transition predicted
-  - 🔴 Red circle: Transition predicted
-- **Sliding Window**: Overlapping frame analysis
-- **GPU Support**: Automatic CUDA detection and optimization
-
-### API Endpoints
-
-#### Doctor Endpoints (`/Doctor`)
-
-- `GET /Embryo/LIST` - Retrieve embryo records
-- `POST /Embryo/ADD` - Add new embryo with images
-- `POST /Embryo/UPDATE` - Update embryo record
-- `POST /Embryo/DELETE` - Delete embryo record
-- `POST /Embryo/GET_IMAGES` - Get embryo images and annotations
-- `GET /Embryo/IMAGE/<id>/<filename>` - Serve image files
-- `POST /Embryo/PREDICT` - Run AI prediction
-
-#### Admin Endpoints (`/Admin`)
-
-- `GET /Doctor/LIST` - List all doctors
-- `POST /Doctor/ADD` - Add new doctor
-- `POST /Doctor/UPDATE` - Update doctor information
-- `POST /Doctor/DELETE` - Delete doctor
-- `POST /Doctor/UPDATE_ACCESS` - Update global access
-
-## 📊 Dataset Information
-
-The system works with embryo image sequences containing developmental transitions. The dataset includes:
-
-- **Image Sequences**: Time-lapse embryo images
-- **Annotations**: Phase labels for each frame
-- **Metadata**: Patient information, grading data
-- **Transitions**: Developmental stage changes
-
-### Dataset Source
-
-This project uses the **Human embryo time-lapse video dataset** from Zenodo:
-
-- **Dataset**: [Human embryo time-lapse video dataset](https://zenodo.org/records/7912264)
-- **DOI**: 10.5281/zenodo.7912264
-- **License**: Creative Commons Attribution Non Commercial Share Alike 4.0 International
-- **Creators**: Gomez Tristan, Feyeux Magalie, Boulant Justine, Normand Nicolas, Paul-Gilloteaux Perrine, David Laurent, Fréour Thomas, Mouchère Harold
-
-### Data Format
+## 6. Scientific pipeline
 
 ```
-Data/
-├── embryo_dataset_F0/             # Original embryo images
-├── embryo_dataset_annotations/    # Phase annotations
-├── embryo_dataset_time_elapsed/   # TimeElapsed annotations
-├── embryo_dataset_grades.csv      # Grading information
-└── Splits/                        # Train/validation/test splits
+Data/ (images + phase annotations)
+  → preProcess.py (video-level splits 492/106/106) → DataSet.py (8-frame windows, stride 1, target consistency_flag)
+  → train_balanced.py → Results/resnet18_balanced/best_model.pth
+  → embeddings.build_cache → Embeddings/resnet18/{train,val,test}/embeddings.pt (512-d)
+  → experiments/* runners on the evaluation/ models (E1 ladder, GRU, HMM k=7 sweep, Semi-HMM) → Results/evaluation/*
+  → reporting (frozen Semi-HMM: filtering posteriors, next-phase distributions, observed transitions, frame mapping)
+  → orchestrator (temporal context, tools, RAG, LLM, grounding) → validator (Istanbul corpus, rules) → answer
 ```
 
-## 🔧 Configuration Details
+## 7. Models
 
-### Training Configuration (`Configs/config.ini`)
+| Model | Status | Where |
+|---|---|---|
+| ResNet18 (class-balanced) | production encoder; **sole surviving checkpoint** | `Results/resnet18_balanced/best_model.pth` |
+| Semi-HMM (dmax 268, negative binomial, unweighted emission) | production / reference, served by `reporting` | `Results/evaluation/semi_hmm_weekend_phaseF/model/` |
+| HMM k=7 (α 2.0, ρ 0.5) | reference for the Semi-HMM comparison | `Results/evaluation/e1_hmm_k7_sweep/best_model/` |
+| E1 ladder (`base_rate`, `identity_dynamics`, `persistence`, `linear_ssm`) and GRU | benchmark / negative results, not served | `Training/evaluation/models/`, `Results/evaluation/e1_*` |
+| Emission re-weighting variants | closed branch, negative result | `Results/evaluation/emission_*` |
+| TimeSformer | original pipeline option; no checkpoint on the server | `Training/ModelBuilder.py` |
+| LLMs (Ollama) | `llama3.2:latest` production default; `mistral-nemo:12b` benchmark model | `Training/orchestrator/llm_config.py` |
 
-#### Data Parameters
+## 8. Benchmarks
 
-- `data_loader`: Type of data loader (image_seq/video)
-- `window_size`: Number of frames in each sequence
-- `stride`: Step size for sliding window
+Fifteen frozen questions (Q1–Q15, French) about one anchor: patient `Patient_319`, window
+156, validation split, where the annotation shows a `t4 → t6` skip and the model believes
+`t7`. Manual grading (PASS/PARTIAL/FAIL), replication n ≥ 3 because the run-to-run noise is
+0.75/15 with identical contexts. Reference results: `mistral-nemo:12b` 5.5/15 baseline; the
+three-condition experiment (FULL 6.83 vs OBSERVED_ONLY 4.50 vs PREDICTION_ONLY 4.67) showed
+that the language model presents model outputs as observations, which motivated the
+Scientific Validator; the paired Validator OFF vs ON run (v1.2) gave 18.5 vs 19.0 /45 with 5
+false positives, fixed in v1.3 without a new benchmark yet.
 
-#### Model Parameters
+**Validator v1.3 rebenchmark status: WAITING_FOR_VALID_GPU.** The one attempt was invalidated
+by an external job on GPU0 (CPU offload) and must never be scored. Everything, including the
+artefact registry with hashes, is in `docs/BENCHMARK.md`.
 
-- `name`: Model architecture (resnet18/timesformer)
-- `pretrained`: Use ImageNet pretrained weights
+## 9. Reproducibility
 
-#### Training Parameters
+`docs/REPRODUCIBILITY_GUIDE.md` lists every input with its identity and backup, the validated
+command sequence (data → classifier → embeddings → evaluation → index → serving → benchmark),
+the reference numbers to reproduce, and what silently breaks comparability. In short:
+Python 3.10 conda env from `requirements.txt`; the dataset; the server's GPU0 only; an Ollama
+service; the 30 RAG documents and the Istanbul corpus with unchanged content. Tests:
+`pytest Tests/` from the repository root plus four `node` tests (`docs/DEVELOPMENT.md`).
 
-- `batch_size`: Number of samples per batch
-- `epochs`: Total training epochs
-- `learning_rate`: Optimizer learning rate
-- `num_workers`: Data loading workers
-- `image_size`: Input image resolution
+## 10. Known limitations
 
-### Web Application Configuration
+- The corpus the application reads at runtime (`docs/corpus/` and the 30 RAG documents) is
+  **ignored by Git** (`docs/` is in `.gitignore`); it exists in the local checkout, on the
+  server and in the 2026-09-15 snapshot. Versioning it is a pending decision.
+- The whole data side lives on one server; the classifier checkpoint has one NAS copy.
+- The original `Results/resnet18/` checkpoint was destroyed on 2026-07-24; the script that
+  produced `gru_identity_threshold_analysis` was never found.
+- Time unit: every artefact says `unknown/unverified`; durations are in windows.
+- Test split consumed twice (E1, GRU) and locked; calibration of the HMM/Semi-HMM never beats
+  a constant-rate baseline; overlapping windows violate emission independence (documented).
+- The Istanbul Consensus is a reference for vocabulary and good-practice statements, explicitly
+  **not a standard of care**, and the Validator's rule R14 never lets it validate a prediction.
+- The language model is non-deterministic run to run; single benchmark runs are not evidence.
+- `Configs/config.ini` is not read; the legacy PREDICT endpoint returns random predictions.
+- GPU0 is shared with other users' jobs; benchmarks wait for it.
 
-#### Environment Variables (.env file)
+## 11. Legacy: `WebApplication/`
 
-The web application uses a `.env` file in the `WebApplication/` directory for configuration:
+The original Flask + PostgreSQL application (login, doctor/admin CRUD, embryo upload, a
+prediction endpoint). It is **not on the current production path**: no import to or from
+`Training/`, no tests, plain-text password check, `debug=True`, and its prediction endpoint
+loads a checkpoint path that no longer exists with the wrong `torch.load` contract, so it
+silently answers with random predictions (`is_random: true`). Launch `cd WebApplication &&
+flask run` (port 5000) with a `.env` built from `WebApplication/.env.example` and the schema in
+`Dataset_shema.sql`. Its future (archive or separate repository) is decided after the
+PostgreSQL side is reviewed.
 
-```env
-# Database Configuration
-host=localhost                    # PostgreSQL server host
-database=embryo_db               # Database name
-user=your_username              # PostgreSQL username
-password=your_password          # PostgreSQL password
-port=5432                       # PostgreSQL port
+## 12. Handover — if you take over the project, start here
 
-# Application Configuration
-EMBRYO_IMAGES_PATH=C:/Embryo_images  # Directory for storing embryo images
-SECRET_KEY=your-secret-key-here      # Flask secret key for sessions
-```
+1. This README.
+2. `docs/ARCHITECTURE.md` — what runs and how it is wired.
+3. `docs/SCIENTIFIC_BACKGROUND.md` — the question, the data, what is established and what is not.
+4. `docs/REPRODUCIBILITY_GUIDE.md` — inputs, commands, reference numbers, what not to touch.
+5. `docs/BENCHMARK.md` — the 15 questions, the protocol, the results, the Validator.
+6. Check the state of the Validator v1.3 rebenchmark (`docs/BENCHMARK.md` §6; the gated
+   launcher waits for GPU0) before changing anything under `Training/orchestrator/`,
+   `validator/`, `rag/` or the RAG documents.
+7. Only then, `docs/DEVELOPMENT.md` for the environment and conventions, and
+   `docs/archive/` (session logs, experiment reports, audits) for the history.
 
-**Important**: Replace all placeholder values with your actual credentials:
+## 13. Reference, licence
 
-- Update `your_username` and `your_password` with your PostgreSQL credentials
-- Change `embryo_db` to your preferred database name
-- Set `EMBRYO_IMAGES_PATH` to your desired image storage location
-- Generate a secure `SECRET_KEY` for Flask sessions
-
-#### File Upload Settings
-
-- Maximum file size: 100MB
-- Supported formats: All image formats
-- Storage structure: `embryo_{ID}_{date}/`
-
-## 🛠️ Development
-
-### Adding New Models
-
-1. **Define Model Architecture** in `Training/ModelBuilder.py`
-2. **Update Configuration** in `Configs/config.ini`
-3. **Add Model Selection Logic** in `Classes/Doctor.py`
-4. **Update Frontend** in `static/Js/Doctor/Embryo.js`
-
-### Extending API Endpoints
-
-1. **Add Route** in `Routes/Doctor_Routes.py` or `Routes/Admin_Routes.py`
-2. **Implement Business Logic** in `Classes/Doctor.py` or `Classes/Admin.py`
-3. **Update Frontend** JavaScript files
-4. **Add Documentation** following existing patterns
-
-## 📈 Performance Optimization
-
-### Training Optimization
-
-- **GPU Acceleration**: Automatic CUDA detection
-- **Data Loading**: Multi-worker data loading
-- **Memory Management**: Efficient batch processing
-
-### Web Application Optimization
-
-- **Session Management**: Optimized session handling
-- **File Serving**: Efficient image serving
-- **Database Queries**: Optimized SQL queries
-- **Caching**: Static asset caching
-
-## 🔒 Security Features
-
-### Authentication & Authorization
-
-- Session-based authentication
-- Role-based access control (Admin/Doctor)
-- Global access level management
-- Secure password handling
-
-### Data Security
-
-- SQL injection prevention
-- Input validation and sanitization
-- Secure file upload handling
-- Organized file structure
-
-### Session Security
-
-- HTTP-only cookies
-- SameSite protection
-- Secure session configuration
-- Automatic session expiration
-
-## 📝 Citation
-
-If you use this project in your research, please cite our paper:
-
-```bibtex
-@article{embryo_transitions_2024,
-  title={Spatio-Temporal Transformers for High-Accuracy Detection of Embryo Developmental Transitions},
-  author={Aissa Benfettoume Souda, Mohammed El Amine Bechar, Souaad
-Hamza-Cherif, Jean-Marie Guyader, Marwa Elbouz, Fréderic Morel,
-Aurore Perrin, and Nesma Settouti},
-  year={2025},
-  url={will be updated}
-}
-```
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-### MIT License Summary
-
-- ✅ Commercial use allowed
-- ✅ Modification allowed
-- ✅ Distribution allowed
-- ✅ Private use allowed
-- ❌ No liability or warranty
-
-## 🤝 Contributing
-
-We welcome contributions to improve this project! Please:
-
-1. **Fork the repository**
-2. **Create a feature branch** (`git checkout -b feature/amazing-feature`)
-3. **Commit your changes** (`git commit -m 'Add amazing feature'`)
-4. **Push to the branch** (`git push origin feature/amazing-feature`)
-5. **Open a Pull Request**
-
-### Contribution Guidelines
-
-- Follow existing code style and documentation patterns
-- Add comprehensive tests for new features
-- Update documentation for any changes
-- Ensure all tests pass before submitting
-
-## 📞 Support
-
-For questions, issues, or contributions:
-
-- **Issues**: [GitHub Issues](https://github.com/AissaStory/Spatio-Temporal-Transformers-for-High-Accuracy-Detection-of-Embryo-Developmental-Transitions/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/AissaStory/Spatio-Temporal-Transformers-for-High-Accuracy-Detection-of-Embryo-Developmental-Transitions/discussions)
-- **Email**: [Contact Email](aissabenfettoumesouda@gmail.com)
-
-## 🙏 Acknowledgments
-
-- **[LSL Team](https://isen-ouest.fr/labisen-la-recherche/equipes-de-recherche/lsl-light-scatter-leaning/)**: Core development team at ISEN Ouest
-- **[Gomez Database](https://zenodo.org/records/7912264)**: Provided embryo dataset
-- **PyTorch Community**: Deep learning framework
-- **Flask Community**: Web framework
-
----
-
-**Made with ❤️ by the LSL Team for advancing embryo developmental analysis**
-
-_Last Updated: 2025-10-04_
+Dataset: Human embryo time-lapse video dataset, Zenodo, DOI 10.5281/zenodo.7912264.
+Original work: *Spatio-Temporal Transformers for High-Accuracy Detection of Embryo
+Developmental Transitions*, A. Benfettoume Souda, M. E. A. Bechar, S. Hamza-Cherif,
+J.-M. Guyader, M. Elbouz, F. Morel, A. Perrin, N. Settouti (2025, LSL team, LabISEN / ISEN
+Ouest). External scientific reference used by the Validator: Coticchio et al., *The Istanbul
+consensus update: a revised ESHRE/ALPHA consensus on oocyte and embryo static and dynamic
+morphological assessment*, Human Reproduction 2025, DOI 10.1093/humrep/deaf021.
+Licence: MIT (`LICENSE`).

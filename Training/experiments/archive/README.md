@@ -11,7 +11,7 @@ snapshot du 2026-09-15) sans aucune modification de contenu, avec leur nom d'ori
   `/tmp` avec `PYTHONPATH=Training`. Relancés depuis ce dossier, les chemins relatifs et
   `sys.path` peuvent nécessiter une adaptation — à faire dans une copie, jamais ici.
 - Le script `summarize_compact_context_experiment.py` de `/tmp` était identique à
-  `Training/orchestrator/summarize_compact_context_experiment.py` et n'a pas été dupliqué.
+  `Training/experiments/context_ablations/summarize_compact_context_experiment.py` et n'a pas été dupliqué.
 - Le script producteur de `Results/evaluation/gru_identity_threshold_analysis/` n'a été retrouvé
   ni dans le dépôt ni dans `/tmp` (statut UNKNOWN).
 

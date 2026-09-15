@@ -1,3 +1,5 @@
+> **Stale (2026-09-15 note).** This file documents only the original four-model linear ladder and `run_e1_baselines.py`. It does not cover `gru`, `hmm`, `semi_hmm`, `run_e1_full_analysis.py` or the frame-shuffle control. Current description and results: `docs/SCIENTIFIC_BACKGROUND.md`; current entry points: `docs/REPRODUCIBILITY_GUIDE.md`. The commands quoted below (`python -m evaluation.run_e1_baselines`, `python -m evaluation.evaluate_linear_ssm_dynamics`) now live under `Training/experiments/e1_ladder/` (`python -m experiments.e1_ladder.<script>`). Kept unchanged below for the original ladder's mathematics.
+
 # evaluation.models
 
 Real, registered `Model` implementations for the shared evaluation

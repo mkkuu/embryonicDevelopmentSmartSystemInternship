@@ -22,7 +22,7 @@ classification, evaluation problem.
 Usage
 -----
     cd Training
-    python -m evaluation.run_e1_baselines \\
+    python -m experiments.e1_ladder.run_e1_baselines \\
         --cache_root ../Embeddings --embedding_model_name resnet18 --seeds 0 1 2
 """
 

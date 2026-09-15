@@ -14,7 +14,7 @@ execution checklist for what to do with the numbers once they exist.
 Usage
 -----
     cd Training
-    python -m evaluation.run_e1_full_analysis \\
+    python -m experiments.e1_ladder.run_e1_full_analysis \\
         --cache_root ../Embeddings --embedding_model_name resnet18 \\
         --n_bootstrap 1000 --bootstrap_seed 0 \\
         --output_dir ../Results/evaluation/e1_full_analysis
