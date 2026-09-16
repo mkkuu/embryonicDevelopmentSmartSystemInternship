@@ -7,6 +7,16 @@ Embeddings/
 # Ignore model checkpoints
 Models/
 
+# Ignore training results/checkpoints (built directly on the remote GPU box)
+Results/
+
+# Ignore the Reporting API's disk-backed inference cache (regenerable via
+# Training/reporting/, see docs/REPORTING_CACHE.md -- pure serving
+# infrastructure, never a scientific artifact)
+Cache/
+RagIndex/
+rag_benchmark_report.json
+
 # Ignore Python cache
 __pycache__/
 *.pyc
@@ -16,6 +26,11 @@ docs/
 .claude/
 CLAUDE.md
 deploy2GPUServ.sha
+
+# Graphify knowledge graph output (regenerable via `graphify .`; rebuilt
+# automatically by the post-commit/post-checkout hooks)
+graphify-out/
+
 # Local secrets / environment files (never commit; see WebApplication/.env.example)
 .env
 *.env
