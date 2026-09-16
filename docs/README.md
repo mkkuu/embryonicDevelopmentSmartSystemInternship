@@ -1,0 +1,68 @@
+# docs/ — map
+
+Restructured on 2026-09-15. Read in this order: the root `README.md`, then the five guides,
+then `reference/`, and only then `archive/`.
+
+## Guides (current, maintained)
+
+| File | Content |
+|---|---|
+| `ARCHITECTURE.md` | what runs, layer by layer, verified in code; fragile couplings; legacy |
+| `SCIENTIFIC_BACKGROUND.md` | question, data, models, established results with sources, limits |
+| `REPRODUCIBILITY_GUIDE.md` | inputs and their identity, rebuild commands, reference numbers, GPU rules |
+| `BENCHMARK.md` | Q1–Q15, protocol, score history, three-condition experiment, Validator, v1.3 status, artefact registry |
+| `DEVELOPMENT.md` | machines, environment, tests, conventions, pitfalls |
+
+## `reference/` — stable specifications and retained reports (not in the RAG index)
+
+`RAG_FIXED_QUESTION_BENCHMARK.md` (the frozen question specification),
+`VALIDATOR_V1_IMPLEMENTATION.md`, `COMPACT_V2_AND_VALIDATOR_INTEGRATION.md`,
+`GROUNDED_GENERATION.md`, `LLM_PROMPT_CONTRACT.md`, `TOOL_CONTRACTS.md`,
+`WEBAPP_SECURITY.md`, `PHASE_7_FINAL_REPORT.md` (web app as built),
+`RAG_LLM_QUALITY_REPORT.md` (28-question quality evaluation).
+
+## The 30 RAG documents — frozen names, do not move, rename or edit
+
+These files stay at the top of `docs/` because `Training/rag/inventory.py` lists them by path,
+`Training/orchestrator/compact_context.py` names 17 of them in its curation rules, and the
+vector index (`RagIndex/`) hashes their content. Changing any of them changes what the
+language model reads. Several are historical (plans, roadmaps, implementation reports) and
+would otherwise belong in `archive/`; they are indexed on purpose (retrieval-scope decision of
+2026-08-25) and may only be re-classified together with a code change and a re-ingestion.
+
+`HANDOFF.md`, `HANDOFF_SEMI_HMM.md`, `HANDOFF_EMISSION_BALANCED.md`,
+`HANDOFF_EMISSION_WEIGHTED.md`, `RESEARCH_BLUEPRINT.md`, `BLUEPRINT_SUMMARY.md`,
+`HMM_RESEARCH_PLAN.md`, `HMM_PHASE0_EXECUTION_PLAN.md`, `SCIENTIFIC_REPORT.md`,
+`SCIENTIFIC_RESULTS.md`, `MODEL_COMPARISON.md`, `GLOBAL_MODEL_COMPARISON.md`,
+`GRU_IDENTITY_ANALYSIS.md`, `GRU_IDENTITY_EXECUTIVE_SUMMARY.md`, `SEMI_HMM_PHASE_1_6_REPORT.md`,
+`REPRODUCIBILITY.md` (2026-08-24 version; superseded in practice by `REPRODUCIBILITY_GUIDE.md`),
+`DATA_LINEAGE.md`, `INFERENCE_SCHEMA.md`, `REPORTING_API.md`,
+`REPORTING_API_IMPLEMENTATION_REPORT.md`, `REPORTING_CACHE.md`,
+`REPORTING_CACHE_IMPLEMENTATION_REPORT.md`, `PRODUCT_ARCHITECTURE.md`, `PRODUCT_ROADMAP.md`,
+`PROJECT_TO_PRODUCT.md`, `RAG_ARCHITECTURE.md`, `RAG_DATA_MODEL.md`, `LLM_ORCHESTRATION.md`,
+`WEBAPP_ARCHITECTURE.md`, `WEBAPP_DATA_REQUIREMENTS.md`.
+
+Authoritative among them: `HANDOFF.md` (mathematical formulation), `RESEARCH_BLUEPRINT.md`
+(hypotheses), `SCIENTIFIC_REPORT.md` (results; supersedes `SCIENTIFIC_RESULTS.md`),
+`HANDOFF_SEMI_HMM.md` (Semi-HMM), `DATA_LINEAGE.md`, `INFERENCE_SCHEMA.md`.
+
+## `corpus/` — the Istanbul Consensus 2025 transcription (runtime dependency of the Validator)
+
+`ISTANBUL_CONSENSUS_2025.md` (138 page-referenced blocks) and
+`ISTANBUL_CONSENSUS_2025_TRACEABILITY.md`. Read directly by `Training/validator/corpus.py`;
+not in the vector index. Never edit; its hash is recorded in every benchmark artefact.
+
+## `archive/` — history, kept verbatim
+
+`archive/sessions/` (day-by-day logs and checkpoints, including the 560 KB
+`PROJECT_CHECKPOINT.md`), `archive/audits/` (the 2026-09-15 repository audits),
+`archive/reports/` (finished experiment reports and design notes, Aug–Sep 2026). Index in
+`archive/README.md`.
+
+## Git status of this directory
+
+`docs/` is currently **ignored by Git** (rule `docs/` in `.gitignore`, which also matched the
+old `WebApplication/docs/`). The guides, the RAG corpus and `corpus/` therefore exist only in
+the local checkout, on the server (older tree) and in the 2026-09-15 snapshot. Un-ignoring
+`docs/` (possibly except `archive/`) is a pending decision recorded in
+`archive/audits/CLEANING_AUDIT_2026-09-15.md`.

@@ -23,16 +23,24 @@ __pycache__/
 
 .vscode/
 
-# docs/ stays local-only (working notes, session logs, historical reports) with
-# ONE exception: docs/corpus/ is a runtime dependency, not documentation.
-# validator/corpus.py (DEFAULT_CORPUS_PATH) and orchestrator/scientific_reference.py
-# read docs/corpus/ISTANBUL_CONSENSUS_2025.md at import time, so a fresh clone
-# cannot run the Validator without it. Written as `docs/*` rather than `docs/`
-# because Git cannot re-include a path whose parent directory is excluded.
-# rag/inventory.py globs `docs/*.md` NON-recursively, so nothing here changes
-# the RAG's 30-document set or the vector index identity.
+# docs/ is local-only by default (session logs, audits, historical reports),
+# with two runtime exceptions a fresh clone genuinely cannot work without:
+#
+#   docs/corpus/  validator/corpus.py (DEFAULT_CORPUS_PATH) and
+#                 orchestrator/scientific_reference.py read
+#                 docs/corpus/ISTANBUL_CONSENSUS_2025.md at import time.
+#   docs/*.md     the top-level documents rag/inventory.py classifies;
+#                 rag/ingest.py builds the vector index from the 30 INCLUDED
+#                 ones, so without them `python -m rag.ingest` cannot run.
+#
+# Written as `docs/*` rather than `docs/` because Git cannot re-include a path
+# whose parent directory is excluded. The negations are deliberately narrow:
+# `!docs/*.md` matches the TOP LEVEL only, so docs/archive/ (session logs,
+# audits, historical reports) and docs/reference/ stay ignored -- no runtime
+# code path reads either of them.
 docs/*
 !docs/corpus/
+!docs/*.md
 
 .claude/
 CLAUDE.md
