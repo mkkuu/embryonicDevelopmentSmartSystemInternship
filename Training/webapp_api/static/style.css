@@ -1,0 +1,635 @@
+/* --- Typography --------------------------------------------------------
+   Inter, self-hosted. The variable font covers every weight the interface
+   uses (400 body, 500 labels/controls, 600 headings) from a single file, so
+   no weight is ever synthesised by the browser.
+
+   Served from this app's own /static, deliberately: the frontend carries NO
+   external URL (same rule the ISEN logo follows), so the interface renders
+   identically offline and no third party is contacted when a page loads.
+   Inter is licensed under the SIL Open Font License 1.1 -- see
+   static/fonts/LICENSE.txt, kept alongside the files it covers.
+
+   Presentation only: no markup, no behaviour and no text content changes. */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("fonts/InterVariable.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("fonts/InterVariable-Italic.woff2") format("woff2");
+}
+
+:root {
+  --font-ui: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  /* Kept for the few places that genuinely read as machine output: the split
+     tag and the RAG citation chips (document paths + section anchors). */
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", monospace;
+}
+
+body {
+  font-family: var(--font-ui);
+  font-weight: 400;
+  /* Inter sets slightly wide by default at UI sizes; a touch of negative
+     tracking restores the density this dense, data-heavy layout needs. */
+  letter-spacing: -0.011em;
+  line-height: 1.5;
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  color: #1a1a1a;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+h1 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+/* --- Brand block -------------------------------------------------------
+   Institutional logo + product title, grouped on the header's left so the
+   existing right-hand controls keep their position. The intrinsic
+   width/height on the <img> reserve the box before the image loads, so the
+   header never shifts (no layout jump); the CSS height then scales it down
+   to header size while `width: auto` preserves the aspect ratio (285x177).
+   Presentation only -- the logo carries no behaviour and no data. */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+#isen-logo {
+  height: 2.75rem;
+  width: auto;
+  flex: none;
+  /* If the asset is ever missing the alt text shows instead of a broken-image
+     box stretched to the intrinsic 285px width. */
+  max-width: 5rem;
+  object-fit: contain;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.split-tag {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: #666;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 0.1rem 0.4rem;
+}
+
+/* --- Patient selection panel ------------------------------------------
+   Two visually distinct columns: the picker (which patient) on the left,
+   the selected patient's own summary on the right. Presentation only. */
+#patient-panel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  align-items: flex-start;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0.75rem 1rem;
+}
+
+#patient-picker {
+  flex: 1 1 16rem;
+  min-width: 14rem;
+}
+
+.picker-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.picker-row label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #444;
+  min-width: 3.5rem;
+}
+
+#patient-filter {
+  flex: 1;
+  font: inherit;
+  font-size: 0.85rem;
+  padding: 0.25rem 0.4rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+#video-select {
+  flex: 1;
+  font: inherit;
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 0.15rem;
+}
+
+#video-select option {
+  padding: 0.15rem 0.35rem;
+}
+
+.picker-count {
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  color: #666;
+  margin: 0.25rem 0 0 4rem;
+}
+
+#patient-info {
+  flex: 1 1 14rem;
+  margin: 0;
+  border-left: 1px solid #eee;
+  padding-left: 1.5rem;
+}
+
+.pi-row {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.2rem 0;
+  font-size: 0.85rem;
+}
+
+#patient-info dt {
+  font-weight: 500;
+  color: #666;
+  min-width: 7.5rem;
+}
+
+#patient-info dd {
+  margin: 0;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 640px) {
+  #patient-info {
+    border-left: none;
+    border-top: 1px solid #eee;
+    padding-left: 0;
+    padding-top: 0.75rem;
+  }
+}
+
+#app-error {
+  font-size: 0.85rem;
+  color: #7a1a1a;
+  background: #fbeaea;
+  border: 1px solid #e6b3b3;
+  border-radius: 4px;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 1rem;
+}
+
+section {
+  margin-bottom: 1.75rem;
+}
+
+h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: #444;
+  margin-bottom: 0.5rem;
+}
+
+#phase-controls,
+#frame-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+#phase-controls label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #444;
+}
+
+#phase-select {
+  font: inherit;
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 0.2rem 0.3rem;
+  max-width: 26rem;
+}
+
+#phase-controls button,
+#frame-controls button {
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 0.25rem 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  color: #1a1a1a;
+  cursor: pointer;
+}
+
+#phase-controls button:hover:not(:disabled),
+#frame-controls button:hover:not(:disabled) {
+  background: #f0f0f0;
+}
+
+#phase-controls button:disabled,
+#frame-controls button:disabled {
+  color: #999;
+  border-color: #e2e2e2;
+  cursor: default;
+}
+
+#frame-position {
+  font-size: 0.8rem;
+  color: #444;
+  font-variant-numeric: tabular-nums;
+  min-width: 14rem;
+}
+
+.control-sep {
+  border-left: 1px solid #ddd;
+  align-self: stretch;
+}
+
+.viewer-hint {
+  font-size: 0.75rem;
+  color: #777;
+  margin: 0.4rem 0 0;
+}
+
+#timeline-bar {
+  display: flex;
+  height: 2.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.timeline-segment {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: white;
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.timeline-segment.selected {
+  outline: 2px solid #000;
+  outline-offset: -2px;
+}
+
+#timeline-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 0.4rem;
+  font-size: 0.75rem;
+}
+
+.legend-swatch {
+  display: inline-block;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 2px;
+  margin-right: 0.25rem;
+  vertical-align: middle;
+}
+
+#current-window-body {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+/* --- Viewer frame ------------------------------------------------------
+   The embryo frame is the centre of gravity of this panel, so the box is
+   sized up from 160px to 188px (+17.5%). Purely a DISPLAY size: the served
+   JPEGs are 500x500, so this is still a downscale -- nothing is upscaled or
+   resampled beyond its native resolution, and the file itself is untouched.
+   `object-fit: contain` guarantees the whole frame stays visible and its
+   aspect ratio is never distorted, whatever the source dimensions. */
+#cw-frame-container {
+  width: 300px;
+  height: 300px;
+  /* Ne grandit pas, mais peut rétrécir sous la largeur disponible sur un
+     très petit écran plutôt que de déborder. */
+  flex: 0 0 auto;
+  max-width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #f3f3f3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+#cw-frame {
+  width: 100%;
+  height: 100%;
+  /* Ratio preserved in full: a non-square frame is letterboxed and centred
+     (object-position defaults to 50% 50%), never stretched. */
+  object-fit: contain;
+  /* Centres the image even if the container ever stops being a flex box. */
+  margin: auto;
+  display: block;
+}
+
+/* `display: block` above is an AUTHOR rule on an id, so it beats the browser's
+   own `[hidden] { display: none }` (author styles win over the UA sheet).
+   Without this, an <img> that app.js has hidden -- a window with no frame, or
+   one still loading -- keeps rendering its alt text on top of the
+   "aucune image disponible" fallback. Restores the attribute's meaning; no
+   markup and no JS change. */
+#cw-frame[hidden] {
+  display: none;
+}
+
+#cw-frame-fallback {
+  font-size: 0.75rem;
+  color: #888;
+  text-align: center;
+  padding: 0.5rem;
+}
+
+/* Ce bloc est un ITEM flex de #current-window-body. Sans base explicite sa
+   largeur max-content depasse la place restante a cote du cadre, donc
+   flex-wrap le renvoyait sur sa propre ligne : le cadre se retrouvait seul
+   sur une ligne de ~850px, avec une bande vide de ~660px a sa droite. Une
+   base souple + min-width:0 le laisse occuper exactement la place restante
+   et faire retomber ses propres valeurs a l'interieur. */
+#current-window-info {
+  display: flex;
+  gap: 0.5rem 1.5rem;
+  flex-wrap: wrap;
+  flex: 1 1 18rem;
+  min-width: 0;
+  align-self: stretch;
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+  align-content: flex-start;
+}
+
+#cw-warnings {
+  margin-top: 0.4rem;
+  font-size: 0.8rem;
+  color: #a15c00;
+}
+
+.grounded-true { color: #1a7a1a; font-weight: 600; }
+.grounded-false { color: #a13a3a; font-weight: 600; }
+
+.source-chip {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  padding: 0.1rem 0.4rem;
+  margin: 0.1rem 0.2rem 0.1rem 0;
+  background: white;
+}
+
+/* --- Fixed questions (frozen benchmark Q1-Q15) --------------------------
+   Presentation only. The wording is fetched from the backend and rendered as
+   text nodes; nothing here carries content. */
+.section-intro {
+  font-size: 0.85rem;
+  color: #555;
+  margin: 0 0 0.6rem;
+}
+
+#fq-context {
+  font-size: 0.8rem;
+  color: #333;
+  background: #eef3f8;
+  border: 1px solid #cddbe8;
+  border-radius: 4px;
+  padding: 0.4rem 0.6rem;
+  margin-bottom: 0.6rem;
+}
+
+#fq-context.chat-context-empty {
+  color: #777;
+  background: #f3f3f3;
+  border-color: #ddd;
+  font-style: italic;
+}
+
+.fq-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.fq-item {
+  border-bottom: 1px solid #eee;
+}
+
+.fq-item:last-child {
+  border-bottom: none;
+}
+
+.fq-item.selected {
+  background: #eef3f8;
+}
+
+.fq-label {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.88rem;
+  cursor: pointer;
+}
+
+.fq-label:hover {
+  background: #f5f7fa;
+}
+
+.fq-label input[type="radio"] {
+  margin: 0;
+  align-self: center;
+  flex: none;
+}
+
+.fq-number {
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  color: #666;
+  min-width: 1.8rem;
+  flex: none;
+}
+
+.fq-text {
+  flex: 1;
+}
+
+.fq-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.6rem;
+}
+
+#fq-submit {
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 0.5rem 1.1rem;
+  border: 1px solid #2b5c8a;
+  border-radius: 4px;
+  background: #2b5c8a;
+  color: #fff;
+  cursor: pointer;
+}
+
+#fq-submit:hover:not(:disabled) {
+  background: #24507a;
+}
+
+#fq-submit:disabled {
+  background: #f0f0f0;
+  border-color: #e2e2e2;
+  color: #999;
+  cursor: default;
+}
+
+.fq-status {
+  font-size: 0.8rem;
+  color: #555;
+}
+
+.fq-status-pending {
+  color: #2b5c8a;
+  font-style: italic;
+}
+
+.fq-status-error {
+  color: #a13a3a;
+  font-weight: 500;
+}
+
+.fq-status-info {
+  color: #7a5a00;
+}
+
+.answer-block {
+  margin-top: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0.75rem 0.9rem;
+  background: #fafafa;
+}
+
+.answer-block h3 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #444;
+  margin: 0 0 0.4rem;
+}
+
+.answer-question {
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin: 0 0 0.2rem;
+}
+
+.sent-context {
+  font-size: 0.75rem;
+  color: #555;
+  font-style: italic;
+  margin: 0 0 0.6rem;
+}
+
+.answer-text {
+  font-size: 0.95rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  margin: 0 0 0.6rem;
+}
+
+.answer-grounding {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  font-size: 0.78rem;
+  color: #555;
+  margin-bottom: 0.3rem;
+}
+
+.answer-provenance,
+.answer-sources {
+  font-size: 0.78rem;
+  color: #555;
+  margin-bottom: 0.3rem;
+}
+
+.answer-sources-title {
+  margin-right: 0.2rem;
+}
+
+.answer-details {
+  font-size: 0.75rem;
+  color: #777;
+  margin-top: 0.4rem;
+}
+
+.answer-details summary {
+  cursor: pointer;
+}
+
+.answer-details > div {
+  margin-top: 0.3rem;
+  color: #a15c00;
+}

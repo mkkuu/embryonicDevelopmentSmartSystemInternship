@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Visualiseur de développement embryonnaire</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <img id="isen-logo" src="{{ url_for('static', filename='logo-LabISEN_2024.png') }}"
+           alt="LabISEN" width="285" height="177">
+      <h1>Visualiseur de développement embryonnaire</h1>
+    </div>
+    <div class="controls">
+      <span class="split-tag">split : val</span>
+    </div>
+  </header>
+
+  <div id="app-error" hidden></div>
+
+  <section id="patient-section">
+    <h2>Patient</h2>
+    <div id="patient-panel">
+      <div id="patient-picker">
+        <div class="picker-row">
+          <label for="patient-filter">Filtrer</label>
+          <input type="search" id="patient-filter" placeholder="ex. 319" autocomplete="off">
+        </div>
+        <div class="picker-row">
+          <label for="video-select">Patient</label>
+          <select id="video-select" size="10"></select>
+        </div>
+        <p id="patient-count" class="picker-count">-</p>
+      </div>
+      <dl id="patient-info">
+        <div class="pi-row"><dt>Identifiant</dt><dd id="pi-id">-</dd></div>
+        <div class="pi-row"><dt>Split</dt><dd id="pi-split">-</dd></div>
+        <div class="pi-row"><dt>Fenêtres</dt><dd id="pi-windows">-</dd></div>
+        <div class="pi-row"><dt>Plage de fenêtres</dt><dd id="pi-range">-</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section id="viewer-section">
+    <h2>Visualiseur</h2>
+
+    <div id="timeline-bar"></div>
+    <div id="timeline-legend"></div>
+
+    <div id="phase-controls">
+      <label for="phase-select">Bande de phase</label>
+      <select id="phase-select"></select>
+      <button type="button" id="btn-phase-first" title="Première image de cette bande de phase">⏮ Début de phase</button>
+      <button type="button" id="btn-phase-last" title="Dernière image de cette bande de phase">Fin de phase ⏭</button>
+    </div>
+
+    <div id="current-window-body">
+      <div id="cw-frame-container">
+        <img id="cw-frame" alt="Image de la fenêtre courante" hidden>
+        <div id="cw-frame-fallback">aucune image disponible</div>
+      </div>
+      <div id="current-window-info">
+        <span>Fenêtre : <strong id="cw-window">-</strong></span>
+        <span>Image : <strong id="cw-frame-number">-</strong></span>
+        <span>Images de la fenêtre : <strong id="cw-frame-range">-</strong></span>
+        <span>Phase (modèle) : <strong id="cw-phase">-</strong></span>
+        <span>Probabilité : <strong id="cw-probability">-</strong></span>
+        <span>Entropie : <strong id="cw-entropy">-</strong></span>
+        <span>Temps : <strong id="cw-time">-</strong></span>
+      </div>
+    </div>
+
+    <div id="frame-controls">
+      <button type="button" id="btn-prev-window" title="Fenêtre précédente (←)">◀ Précédente</button>
+      <span id="frame-position">-</span>
+      <button type="button" id="btn-next-window" title="Fenêtre suivante (→)">Suivante ▶</button>
+      <span class="control-sep"></span>
+      <button type="button" id="btn-which-first" title="Afficher la première image de cette fenêtre">Première image</button>
+      <button type="button" id="btn-which-last" title="Afficher la dernière image de cette fenêtre">Dernière image</button>
+      <span class="control-sep"></span>
+      <button type="button" id="btn-back-anchor" title="Revenir à la fenêtre sélectionnée (touche Début)">⌂ Retour à la sélection</button>
+    </div>
+    <p id="viewer-hint" class="viewer-hint">← / → pour changer de fenêtre · la touche Début (Home) revient à la fenêtre sélectionnée</p>
+
+    <div id="cw-warnings"></div>
+  </section>
+
+  <section id="fixed-questions-section">
+    <h2>Questions fixes</h2>
+    <p class="section-intro">Quinze questions de référence, posées sur le patient et la fenêtre sélectionnés ci-dessus.</p>
+    <div id="fq-context">Chargement du contexte…</div>
+    <form id="fq-form">
+      <ol id="fq-list" class="fq-list"></ol>
+      <div class="fq-actions">
+        <button type="submit" id="fq-submit" disabled>Poser la question</button>
+        <span id="fq-status" class="fq-status"></span>
+      </div>
+    </form>
+    <div id="fq-answer-block" class="answer-block" hidden>
+      <h3>Réponse</h3>
+      <p id="fq-answer-question" class="answer-question"></p>
+      <p id="fq-sent-context" class="sent-context"></p>
+      <p id="fq-answer" class="answer-text"></p>
+      <div id="fq-grounding" class="answer-grounding"></div>
+      <div id="fq-provenance" class="answer-provenance"></div>
+      <div id="fq-sources" class="answer-sources"></div>
+      <details id="fq-details" class="answer-details">
+        <summary>Détails techniques</summary>
+        <div id="fq-warnings"></div>
+      </details>
+    </div>
+  </section>
+
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
