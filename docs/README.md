@@ -1,7 +1,9 @@
 # docs/ — map
 
 Restructured on 2026-09-15. Read in this order: the root `README.md`, then the five guides,
-then `reference/`, and only then `archive/`.
+then `reference/`, and only then `archive/`. Note that only part of this directory is in Git
+(see "Git status of this directory" at the end): a fresh clone has the guides, the 30 RAG
+documents and `corpus/`, but **not** `reference/` or `archive/`.
 
 ## Guides (current, maintained)
 
@@ -13,7 +15,7 @@ then `reference/`, and only then `archive/`.
 | `BENCHMARK.md` | Q1–Q15, protocol, score history, three-condition experiment, Validator, v1.3 status, artefact registry |
 | `DEVELOPMENT.md` | machines, environment, tests, conventions, pitfalls |
 
-## `reference/` — stable specifications and retained reports (not in the RAG index)
+## `reference/` — stable specifications and retained reports (not in the RAG index; local-only, not in Git)
 
 `RAG_FIXED_QUESTION_BENCHMARK.md` (the frozen question specification),
 `VALIDATOR_V1_IMPLEMENTATION.md`, `COMPACT_V2_AND_VALIDATOR_INTEGRATION.md`,
@@ -52,7 +54,7 @@ Authoritative among them: `HANDOFF.md` (mathematical formulation), `RESEARCH_BLU
 `ISTANBUL_CONSENSUS_2025_TRACEABILITY.md`. Read directly by `Training/validator/corpus.py`;
 not in the vector index. Never edit; its hash is recorded in every benchmark artefact.
 
-## `archive/` — history, kept verbatim
+## `archive/` — history, kept verbatim (local-only, not in Git)
 
 `archive/sessions/` (day-by-day logs and checkpoints, including the 560 KB
 `PROJECT_CHECKPOINT.md`), `archive/audits/` (the 2026-09-15 repository audits),
@@ -61,8 +63,22 @@ not in the vector index. Never edit; its hash is recorded in every benchmark art
 
 ## Git status of this directory
 
-`docs/` is currently **ignored by Git** (rule `docs/` in `.gitignore`, which also matched the
-old `WebApplication/docs/`). The guides, the RAG corpus and `corpus/` therefore exist only in
-the local checkout, on the server (older tree) and in the 2026-09-15 snapshot. Un-ignoring
-`docs/` (possibly except `archive/`) is a pending decision recorded in
-`archive/audits/CLEANING_AUDIT_2026-09-15.md`.
+Since 2026-09-16 (commits `621f458` and `5358604`), `docs/` is **partly versioned**. The
+`.gitignore` rule is `docs/*` with two negations, `!docs/corpus/` and `!docs/*.md`:
+
+| Part | In Git? | Why |
+|---|---|---|
+| the five guides + `README.md` (top-level `*.md`) | **yes** | successor documentation |
+| the 30 RAG documents (top-level `*.md`) | **yes** | runtime dependency of `Training/rag/ingest.py` (`inventory.INCLUDED`) |
+| `corpus/` | **yes** | runtime dependency of `Training/validator/corpus.py` |
+| `reference/` | **no** — local-only | retained reports; no code path reads them |
+| `archive/` | **no** — local-only | session logs, audits, historical reports; no code path reads them |
+
+`reference/` and `archive/` exist only in the local checkout, in the 2026-09-15 snapshot
+(kept by the project owner) and, as an older flat tree, on the GPU server.
+This is deliberate: they are history, not inputs. Whether to version them later is an open,
+non-blocking decision; nothing in the application depends on it.
+
+Consequence of versioning the top-level `*.md`: adding or removing any `docs/*.md` now
+requires classifying it in `Training/rag/inventory.py` (`INCLUDED` or `EXCLUDED`), or
+`Tests/rag/test_rag_inventory.py` fails.

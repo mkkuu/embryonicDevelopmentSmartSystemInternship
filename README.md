@@ -74,7 +74,7 @@ Scientific components behind it: `Training/embeddings/` (cached ResNet18 embeddi
 | `Configs/config.ini` | training configuration of the original pipeline; **not read on Linux** because of a Windows path bug, kept for the record |
 | `Results/` | gitignored; exists only on the GPU server: checkpoints, frozen HMM/Semi-HMM, every experiment and benchmark artefact |
 | `Ressources/` | logos and the Istanbul Consensus 2025 PDF from which the corpus was transcribed |
-| `docs/` | the guides below, the 30 documents that form the RAG corpus (frozen names), `corpus/` (Istanbul transcription), `reference/`, `archive/` |
+| `docs/` | the guides below, the 30 documents that form the RAG corpus (frozen names) and `corpus/` (Istanbul transcription) are versioned; `reference/` and `archive/` are **local-only** (not in Git, present on the original checkout and in the 2026-09-15 snapshot) — see `docs/README.md` |
 | `WebApplication/` | the original doctor/admin Flask application — **legacy**, see §11 |
 | `deploy2GPUServ.sh` | rsync of the code to the GPU server (excludes data, results, `docs/`) |
 
@@ -185,7 +185,9 @@ PostgreSQL side is reviewed.
    launcher waits for GPU0) before changing anything under `Training/orchestrator/`,
    `validator/`, `rag/` or the RAG documents.
 7. Only then, `docs/DEVELOPMENT.md` for the environment and conventions, and
-   `docs/archive/` (session logs, experiment reports, audits) for the history.
+   `docs/archive/` (session logs, experiment reports, audits) for the history — note that
+   `docs/archive/` and `docs/reference/` are not in Git; a fresh clone does not have them
+   (see `docs/README.md`).
 
 ## 13. Reference, licence
 
