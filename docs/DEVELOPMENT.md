@@ -15,9 +15,11 @@ how to reproduce results, `REPRODUCIBILITY_GUIDE.md`.
 | LLM | none | Ollama system service (`ollama serve`, `http://localhost:11434`), pinned to GPU0 |
 
 Deploy local → server with `./deploy2GPUServ.sh` (rsync `--delete` with explicit excludes for
-`Data/ Results/ Embeddings/ Models/ RagIndex/ Cache/` and a `.gitignore` filter). Two consequences
-to know: `docs/` is gitignored, therefore **never synced** by the script (the server holds an
-older `docs/` tree, which is exactly the RAG corpus it indexed); and always dry-run
+`Data/ Results/ Embeddings/ Models/ RagIndex/ Cache/` and a `.gitignore` filter). Three things
+to know: the server has **not** been synced since the 2026-09-15 restructure (old layout, old
+`docs/` = exactly the RAG corpus it indexed; `handover/GPU_SERVER.md` §6) and must stay so until
+the v1.3b comparison; `docs/` is now partly versioned (`docs/README.md`), and whether the
+script's `.gitignore` filter syncs those parts has not been verified; and always dry-run
 (`rsync -n`) before trusting a `--delete` invocation — a wrong exclude destroyed the server's
 `Results/` and `Data/` once (2026-07-24). One path per rsync call, never `a/ b/ c/ dest/`
 (a multi-source call once flattened `Tests/` on the server).
@@ -106,7 +108,7 @@ All tests are synthetic-data / mocked-dependency: no GPU, no vector DB, no live 
 | Benchmark entry points | `Training/orchestrator/run_fixed_question_benchmark.py`, `run_validator_experiment.py`, `capture_run_identity.py`, `summarize_fixed_question_runs.py` |
 | Finished-experiment runners | `Training/experiments/{e1_ladder, gru, hmm_semi_hmm, llm_regression, context_ablations, rag_llm_diagnostics, embeddings_exploration, rag_retrieval_smoke}/` — moved out of the packages on 2026-09-15 (imports updated, behaviour unchanged); index in `Training/experiments/README.md` |
 | Salvaged one-off scripts | `Training/experiments/archive/` (37 scripts that only existed in the server's `/tmp`; see its README) |
-| Documentation map | `docs/README.md` |
+| Documentation map | `docs/README.md`; successor documents in `docs/handover/` |
 | Session history | `docs/archive/sessions/` (the 560 KB `PROJECT_CHECKPOINT.md` is the day-by-day log up to 2026-09-15) |
 
 ## 7. Working with an AI coding agent

@@ -39,9 +39,16 @@ __pycache__/
 # `!docs/*.md` matches the TOP LEVEL only, so docs/archive/ (session logs,
 # audits, historical reports) and docs/reference/ stay ignored -- no runtime
 # code path reads either of them.
+#
+#   docs/handover/  successor documentation (2026-09-17): HANDOVER, GPU server,
+#                 RAG operations, web-app guide. Kept in a subdirectory on
+#                 purpose: rag/inventory.py classifies every top-level docs/*.md
+#                 and is hashed into the benchmark run identity, so new
+#                 top-level files there would touch that module.
 docs/*
 !docs/corpus/
 !docs/*.md
+!docs/handover/
 
 .claude/
 CLAUDE.md

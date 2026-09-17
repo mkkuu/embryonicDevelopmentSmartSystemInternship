@@ -1,9 +1,10 @@
 # docs/ — map
 
-Restructured on 2026-09-15. Read in this order: the root `README.md`, then the five guides,
-then `reference/`, and only then `archive/`. Note that only part of this directory is in Git
-(see "Git status of this directory" at the end): a fresh clone has the guides, the 30 RAG
-documents and `corpus/`, but **not** `reference/` or `archive/`.
+Restructured on 2026-09-15; successor documents added under `handover/` on 2026-09-17. Read in
+this order: the root `README.md`, then `handover/HANDOVER.md`, then the five guides, then
+`reference/`, and only then `archive/`. Note that only part of this directory is in Git (see
+"Git status of this directory" at the end): a fresh clone has the guides, `handover/`, the 30
+RAG documents and `corpus/`, but **not** `reference/` or `archive/`.
 
 ## Guides (current, maintained)
 
@@ -14,6 +15,18 @@ documents and `corpus/`, but **not** `reference/` or `archive/`.
 | `REPRODUCIBILITY_GUIDE.md` | inputs and their identity, rebuild commands, reference numbers, GPU rules |
 | `BENCHMARK.md` | Q1–Q15, protocol, score history, three-condition experiment, Validator, v1.3 status, artefact registry |
 | `DEVELOPMENT.md` | machines, environment, tests, conventions, pitfalls |
+
+## `handover/` — successor documents (2026-09-17, in Git, not in the RAG index)
+
+| File | Content |
+|---|---|
+| `handover/HANDOVER.md` | first hour / day / week, checklists before touching code, experiments, benchmark, corpus, server; how to read the current state; validity of a run; recovery; source of truth |
+| `handover/GPU_SERVER.md` | shared-server rules, read-only diagnostics, valid vs CPU-offload condition, the gated v1.3b launcher, post-run checks, server tree vs HEAD, restoring inputs |
+| `handover/RAG_OPERATIONS.md` | corpus and INCLUDED/EXCLUDED semantics, embedding model, Chroma index and manifest, retrieval and query enrichment, provenance, why the server index is older than the versioned corpus |
+| `handover/WEBAPP_GUIDE.md` | current BFF + frontend, endpoints and payloads, running it, security posture, the legacy `WebApplication/` |
+
+They live in a subdirectory on purpose: `Training/rag/inventory.py` must classify every
+top-level `docs/*.md` and is hashed into the benchmark run identity (see the last section).
 
 ## `reference/` — stable specifications and retained reports (not in the RAG index; local-only, not in Git)
 
@@ -64,11 +77,13 @@ not in the vector index. Never edit; its hash is recorded in every benchmark art
 ## Git status of this directory
 
 Since 2026-09-16 (commits `621f458` and `5358604`), `docs/` is **partly versioned**. The
-`.gitignore` rule is `docs/*` with two negations, `!docs/corpus/` and `!docs/*.md`:
+`.gitignore` rule is `docs/*` with three negations, `!docs/corpus/`, `!docs/*.md` and
+`!docs/handover/` (the last one added 2026-09-17):
 
 | Part | In Git? | Why |
 |---|---|---|
 | the five guides + `README.md` (top-level `*.md`) | **yes** | successor documentation |
+| `handover/` | **yes** (`!docs/handover/`, 2026-09-17) | successor documentation, outside the `docs/*.md` glob of `rag/inventory.py` |
 | the 30 RAG documents (top-level `*.md`) | **yes** | runtime dependency of `Training/rag/ingest.py` (`inventory.INCLUDED`) |
 | `corpus/` | **yes** | runtime dependency of `Training/validator/corpus.py` |
 | `reference/` | **no** — local-only | retained reports; no code path reads them |
@@ -81,4 +96,7 @@ non-blocking decision; nothing in the application depends on it.
 
 Consequence of versioning the top-level `*.md`: adding or removing any `docs/*.md` now
 requires classifying it in `Training/rag/inventory.py` (`INCLUDED` or `EXCLUDED`), or
-`Tests/rag/test_rag_inventory.py` fails.
+`Tests/rag/test_rag_inventory.py` fails. `inventory.py` is one of the modules hashed by
+`orchestrator/capture_run_identity.py`, so a new top-level document changes the recorded run
+identity; put new documentation in `handover/` (or another subdirectory re-included in
+`.gitignore`) instead, until the pending v1.3b comparison is done.

@@ -31,8 +31,8 @@ this guide supersedes it for practical purposes.
 | Frozen Semi-HMM | `Results/evaluation/semi_hmm_weekend_phaseF/model/` | `dmax=268`, negative_binomial, unweighted | snapshot 2026-09-15 |
 | Frozen HMM | `Results/evaluation/e1_hmm_k7_sweep/best_model/` | α=2.0, ρ=0.5 | snapshot |
 | GRU checkpoints | `Results/evaluation/e1_gru_step6a_full/checkpoint/` | 3 seeds × 2 formulations | snapshot |
-| RAG corpus | the 30 `docs/*.md` listed in `Training/rag/inventory.py` | content hashes in `RagIndex/manifest.json` | in the repo checkout (gitignored) + snapshot |
-| Istanbul corpus | `docs/corpus/ISTANBUL_CONSENSUS_2025.md` (+ `_TRACEABILITY.md`) | SHA-256 `9670adba…` (2026-09-11) | snapshot |
+| RAG corpus | the 30 `docs/*.md` listed in `Training/rag/inventory.py` | content hashes in `RagIndex/manifest.json` | **versioned in Git since 2026-09-16** (content unchanged) + snapshot; the server holds the same 30 files in its older flat `docs/` |
+| Istanbul corpus | `docs/corpus/ISTANBUL_CONSENSUS_2025.md` (+ `_TRACEABILITY.md`) | SHA-256 `9670adba…` (2026-09-11) | versioned in Git since 2026-09-16 + snapshot |
 | Vector index | `RagIndex/` (Chroma, `docs_v1`) | manifest 2026-08-25 | regenerable |
 | Inference cache | `Cache/reporting/semi_hmm/<config>/<split>/<video>/inference.json` | — | regenerable |
 | Benchmark artefacts | `Results/evaluation/{validator_experiment, compact_context_experiment, observed_only_experiment, prediction_only_experiment, event_anomaly_rag_inventory, rag_llm_quality, llm_benchmark_*}` | SHA-256 in `BENCHMARK.md` §8 | snapshot |
@@ -107,9 +107,11 @@ contexts); only the contexts, the grounding and the validator verdicts are deter
 - Editing, renaming or moving any of the 30 RAG documents or `docs/corpus/`: the index and the
   curated context change; every benchmark artefact records `istanbul_corpus_sha256` and the
   RAG identity, so later runs stop being comparable.
-- Syncing a different `docs/` tree to the server with `deploy2GPUServ.sh` (it excludes
-  `docs/`, so today the server's corpus is the 2026-08-25 one). Re-ingest deliberately, then
-  re-run the benchmark, never as a side effect.
+- Syncing a different `docs/` tree to the server with `deploy2GPUServ.sh`. Today the server's
+  corpus and index are the 2026-08-25 ones and its code tree predates the 2026-09-15
+  restructure; whether the script's `.gitignore` filter now syncs the versioned parts of `docs/`
+  has not been verified (`handover/GPU_SERVER.md` §6). Re-ingest deliberately, then re-run the
+  benchmark, never as a side effect.
 - Moving modules under `Training/orchestrator/`, `validator/`, `rag/` before the pending
   Validator v1.3 rebenchmark: `capture_run_identity` hashes them by path.
 - Letting `Ollama` change: the model digest (`mistral-nemo:12b` = `e7e06d107c6c…`, Ollama
