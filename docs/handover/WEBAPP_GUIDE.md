@@ -109,7 +109,7 @@ Routes as registered in `Routes/Doctor_Routes.py` and `Routes/Admin_Routes.py` (
 `/Embryo/{LIST,ADD,UPDATE,DELETE,GET_IMAGES,PREDICT}`, `/Embryo/IMAGE/<id>/<filename>`; login
 and role dispatch in `app.py` / `HandleAccess.py`. `app.secret_key` is generated with
 `os.urandom` at start-up (the `SECRET_KEY` variable shown in the original README is not read).
-The original author's README (`git show d0181fd:README.md`) documents this application, its
+The original author's README (`git show d268761:README.md`) documents this application, its
 PostgreSQL set-up and the training CLI in full and remains the reference for it.
 
 Its `.env` was a tracked secret until 2026-09-15 (`README.md` §14 "Security"); the credential

@@ -42,7 +42,7 @@ the successor must not read the whole as created during the 2026 extension.
 
 | Aspect | What the repository establishes | Source |
 |---|---|---|
-| Original author and originator of the codebase and of the research direction | **Aissa Benfettoume Souda**, first author of the reference paper, LSL team, LabISEN / ISEN Ouest | paper citation in the original README (`git show d0181fd:README.md`) and in §15 |
+| Original author and originator of the codebase and of the research direction | **Aissa Benfettoume Souda**, first author of the reference paper, LSL team, LabISEN / ISEN Ouest | paper citation in the original README (`git show d268761:README.md`) and in §15 |
 | Copyright holder of the original code | "Aissa BenFettoume Souda", 2025, MIT | `LICENSE` |
 | Reference paper | *Spatio-Temporal Transformers for High-Accuracy Detection of Embryo Developmental Transitions* (2025), eight authors (§15) | original README (BibTeX), §15 |
 | Initial code | `Training/*.py` (pre-processing, sliding-window dataset, ResNet18 / TimeSformer builder, training loop, configuration), `Configs/config.ini` | module headers `Author: LSL Team, Version 1.0, Last Updated: 2025-10-04` (13 of the 14 original modules; the 14th, `train_balanced.py`, was added by the extension) |
@@ -51,7 +51,7 @@ the successor must not read the whole as created during the 2026 extension.
 | Original repository and contact | GitHub `AissaStory/Spatio-Temporal-Transformers-for-High-Accuracy-Detection-of-Embryo-Developmental-Transitions`; contact e-mail in the original README | original README |
 | Author's published checkpoints | on the laboratory NAS; they solve a **per-frame** classification task (phase or embryo quality), not the windowed transition task, so the extension had to train its own classifier | `docs/archive/sessions/POINT_STAGE_2026-07-23.md` |
 
-The original README (recoverable with `git show d0181fd:README.md`) documents the training CLI,
+The original README (recoverable with `git show d268761:README.md`) documents the training CLI,
 `config.ini`, the PostgreSQL set-up and the legacy application in full; it remains the
 reference for that part of the project.
 
@@ -95,7 +95,7 @@ Verbatim from `docs/RESEARCH_BLUEPRINT.md` (Part I):
 
 | Item | Status on 2026-09-17 |
 |---|---|
-| Repository | HEAD `d604d91` = `origin/main`; this documentation pass is in the working tree, uncommitted; 5 untracked local files (§5.4) |
+| Repository | HEAD `f8e64cd` = `origin/main`; this documentation pass is in the working tree, uncommitted; 5 untracked local files (§5.4) |
 | Scientific models | frozen; the served Semi-HMM has not changed since 2026-08-23 |
 | Benchmark | Q1–Q15 frozen since 2026-09-01; last valid run = Validator v1.2 OFF/ON (2026-09-12) |
 | Validator | v1.3 implemented, frozen (hashes in the gated launcher), tests pass; **not yet rebenchmarked** |
@@ -334,7 +334,7 @@ legacy application, not on the current path. Both: `docs/handover/WEBAPP_GUIDE.m
 
 ## 5. Repository Structure
 
-### 5.1 Tracked (in Git, `origin/main` = `d604d91`)
+### 5.1 Tracked (in Git, `origin/main` = `f8e64cd`)
 
 | Path | Role | Kind |
 |---|---|---|
@@ -566,7 +566,7 @@ archiving `WebApplication/`, rotating the legacy PostgreSQL credential (§14).
 
 First day, in order:
 
-1. `git status && git log --oneline -5` — expect a clean tree at or after `d604d91`.
+1. `git status && git log --oneline -5` — expect a clean tree at or after `f8e64cd`.
 2. Read this README, then `docs/handover/HANDOVER.md`.
 3. Get the session history: `docs/archive/sessions/PROJECT_CHECKPOINT.md` is not in Git; ask
    for the original checkout or the 2026-09-15 snapshot (`HANDOVER.md` §"Source of truth").

@@ -21,7 +21,7 @@ July 2026 by the current repository owner. Details and sources: `README.md` §1.
 ### First hour — read and inspect, change nothing
 
 1. `git status`, `git log --oneline --decorate -10`, `git remote -v`. Expect a clean tree at
-   `d604d91` or later, branch `main`, one remote `origin`. Five untracked local files are normal
+   `f8e64cd` or later, branch `main`, one remote `origin`. Five untracked local files are normal
    (`README.md` §5.4).
 2. Read `README.md` in full, including the "Scientific Integrity — DO NOT VIOLATE" banner.
 3. Read `README.md` §11 (current open work) and `docs/BENCHMARK.md` §6 (the Validator and the
@@ -197,7 +197,7 @@ Never overwrite, never delete.
 | What was measured? | the artefacts under `Results/evaluation/` on the server (SHA-256 registry in `docs/BENCHMARK.md` §8), copied in the 2026-09-15 snapshot (a local copy kept by the project owner and a copy on the laboratory NAS; locations handed over separately) |
 | What is the protocol? | `Training/orchestrator/fixed_question_benchmark.py` + `docs/reference/RAG_FIXED_QUESTION_BENCHMARK.md` + `docs/BENCHMARK.md` §3 |
 | What is the state and why? | `docs/archive/sessions/PROJECT_CHECKPOINT.md` (newest first). **Not in Git**: it lives in the original checkout and in both snapshots. Without it you have the state summarised in `README.md` §11 (dated 2026-09-17) and the commit messages, which are detailed |
-| Who did what, originally? | `LICENSE`, `git show d0181fd:README.md` (the original author's README: paper authors, contact, legacy app and CLI documented in full), `README.md` §1.2 |
+| Who did what, originally? | `LICENSE`, `git show d268761:README.md` (the original author's README: paper authors, contact, legacy app and CLI documented in full), `README.md` §1.2 |
 | What is the mathematics? | `docs/HANDOFF.md` (stable, never fitted to data) |
 | What are the hypotheses? | `docs/RESEARCH_BLUEPRINT.md` |
 | Which document is current? | `docs/README.md` (the map); anything under `docs/archive/` was correct on its date only |
