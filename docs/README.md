@@ -76,7 +76,7 @@ not in the vector index. Never edit; its hash is recorded in every benchmark art
 
 ## Git status of this directory
 
-Since 2026-09-16 (commits `8c1ad1d` and `879fc9c`), `docs/` is **partly versioned**. The
+Since 2026-09-16 (commits `a7c7792` and `2a650f9`), `docs/` is **partly versioned**. The
 `.gitignore` rule is `docs/*` with three negations, `!docs/corpus/`, `!docs/*.md` and
 `!docs/handover/` (the last one added 2026-09-17):
 

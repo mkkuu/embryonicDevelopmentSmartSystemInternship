@@ -42,7 +42,7 @@ the successor must not read the whole as created during the 2026 extension.
 
 | Aspect | What the repository establishes | Source |
 |---|---|---|
-| Original author and originator of the codebase and of the research direction | **Aissa Benfettoume Souda**, first author of the reference paper, LSL team, LabISEN / ISEN Ouest | paper citation in the original README (`git show d268761:README.md`) and in §15 |
+| Original author and originator of the codebase and of the research direction | **Aissa Benfettoume Souda**, first author of the reference paper, LSL team, LabISEN / ISEN Ouest | paper citation in the original README (`git show 76fb7fd:README.md`) and in §15 |
 | Copyright holder of the original code | "Aissa BenFettoume Souda", 2025, MIT | `LICENSE` |
 | Reference paper | *Spatio-Temporal Transformers for High-Accuracy Detection of Embryo Developmental Transitions* (2025), eight authors (§15) | original README (BibTeX), §15 |
 | Initial code | `Training/*.py` (pre-processing, sliding-window dataset, ResNet18 / TimeSformer builder, training loop, configuration), `Configs/config.ini` | module headers `Author: LSL Team, Version 1.0, Last Updated: 2025-10-04` (13 of the 14 original modules; the 14th, `train_balanced.py`, was added by the extension) |
@@ -51,7 +51,7 @@ the successor must not read the whole as created during the 2026 extension.
 | Original repository and contact | GitHub `AissaStory/Spatio-Temporal-Transformers-for-High-Accuracy-Detection-of-Embryo-Developmental-Transitions`; contact e-mail in the original README | original README |
 | Author's published checkpoints | on the laboratory NAS; they solve a **per-frame** classification task (phase or embryo quality), not the windowed transition task, so the extension had to train its own classifier | `docs/archive/sessions/POINT_STAGE_2026-07-23.md` |
 
-The original README (recoverable with `git show d268761:README.md`) documents the training CLI,
+The original README (recoverable with `git show 76fb7fd:README.md`) documents the training CLI,
 `config.ini`, the PostgreSQL set-up and the legacy application in full; it remains the
 reference for that part of the project.
 
@@ -560,7 +560,7 @@ committed, re-classifying the six guides into the corpus, re-ingesting the index
 module under `orchestrator/`, `validator/` or `rag/`, syncing the restructured tree to the
 server, changing the production `LLM_MODEL`, adopting the compact context. Non-blocking open
 decisions: versioning `docs/archive/` and `docs/reference/`, the five untracked files,
-archiving `WebApplication/`, rotating the legacy PostgreSQL credential (§14).
+archiving `WebApplication/`.
 
 ---
 
@@ -568,7 +568,7 @@ archiving `WebApplication/`, rotating the legacy PostgreSQL credential (§14).
 
 First day, in order:
 
-1. `git status && git log --oneline -5` — expect a clean tree at or after `f8e64cd`.
+1. `git status && git log --oneline -5` — expect a clean tree at or after `da4dcd2`.
 2. Read this README, then `docs/handover/HANDOVER.md`.
 3. Get the session history: `docs/archive/sessions/PROJECT_CHECKPOINT.md` is not in Git; ask
    for the original checkout or the 2026-09-15 snapshot (`HANDOVER.md` §"Source of truth").
@@ -642,9 +642,10 @@ The legacy `WebApplication/.env` (a real PostgreSQL credential) was tracked and 
 July 2026. On 2026-09-15 it was untracked, ignored (`.env`, `*.env`, `WebApplication/.env`),
 replaced by `WebApplication/.env.example`, and purged from the Git history of the internal
 repository (filter-repo); this public repository was created afterwards from the cleaned history
-and never contained it. **The credential itself has not been rotated**: the database host is reachable neither
-from the local machine nor from the GPU server, so rotation is a human action on the database
-machine (`docs/archive/audits/SECURITY_HARDENING_2026-09-15.md`). Local environment
+and never contained it: the former credential is not present in this repository, in its tree
+or in its history, and no usable credential is published here (checked on the full public
+history before release). Managing that legacy database account is an internal matter of the
+machine hosting it, outside this repository. Local environment
 configuration must stay outside Git; never write a secret into a document, a commit or a chat.
 Nothing under `Training/` uses PostgreSQL. The BFF has no authentication and binds to localhost
 by default; do not expose it.
@@ -672,6 +673,15 @@ transcription under `docs/corpus/`).
 
 Licence of the code: MIT (`LICENSE`, copyright 2025 Aissa BenFettoume Souda). Licence of the
 dataset: CC BY-NC-SA 4.0.
+
+The MIT licence covers the **code** of this repository only. Two files reproduce a third-party
+publication and keep that publication's own licence; they are **not** relicensed under MIT:
+`Ressources/Istanbul Consensus 2025 (2).pdf` and its transcription
+`docs/corpus/ISTANBUL_CONSENSUS_2025.md` (Coticchio et al., Human Reproduction 2025, DOI
+10.1093/humrep/deaf021), an Open Access article distributed under the Creative Commons
+Attribution-NonCommercial licence (**CC BY-NC 4.0**): redistribution with attribution, for
+non-commercial use only. The dataset (not distributed here) is under CC BY-NC-SA 4.0. The
+repository is therefore not under one single licence.
 
 ### Documentation map
 

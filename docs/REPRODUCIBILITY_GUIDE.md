@@ -39,7 +39,7 @@ this guide supersedes it for practical purposes.
 
 Snapshot of 2026-09-15: a local copy kept by the project owner (full `Results/`, the 38 `/tmp`
 scripts, docs, manifests) and a copy on the laboratory NAS (tars + `SHA256SUMS`); the exact
-locations are handed over separately. Git restoration point: commit `0aeb666` (internal tag `pre-cleaning-2026-09-15`, not published).
+locations are handed over separately. Git restoration point: commit `bbc26a5` (internal tag `pre-cleaning-2026-09-15`, not published).
 
 **Lost and not recoverable**: the original `Results/resnet18/` checkpoint (destroyed
 2026-07-24); the script that produced `Results/evaluation/gru_identity_threshold_analysis/`
