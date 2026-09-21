@@ -107,7 +107,7 @@ contexts); only the contexts, the grounding and the validator verdicts are deter
 - Editing, renaming or moving any of the 30 RAG documents or `docs/corpus/`: the index and the
   curated context change; every benchmark artefact records `istanbul_corpus_sha256` and the
   RAG identity, so later runs stop being comparable.
-- Syncing a different `docs/` tree to the server with `deploy2GPUServ.sh`. Today the server's
+- Syncing a different `docs/` tree to the server with the local deploy script (not versioned). Today the server's
   corpus and index are the 2026-08-25 ones and its code tree predates the 2026-09-15
   restructure; whether the script's `.gitignore` filter now syncs the versioned parts of `docs/`
   has not been verified (`handover/GPU_SERVER.md` §6). Re-ingest deliberately, then re-run the

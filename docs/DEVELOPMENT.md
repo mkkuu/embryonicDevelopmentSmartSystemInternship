@@ -14,7 +14,7 @@ how to reproduce results, `REPRODUCIBILITY_GUIDE.md`.
 | Python | no GPU, compiled wheels need `LD_LIBRARY_PATH=/run/current-system/sw/share/nix-ld/lib` on this NixOS machine | `~/miniconda3/envs/embryo_env/bin/python` (torch 2.6 + CUDA), call it by full path: non-interactive SSH does not source conda |
 | LLM | none | Ollama system service (`ollama serve`, `http://localhost:11434`), pinned to GPU0 |
 
-Deploy local → server with `./deploy2GPUServ.sh` (rsync `--delete` with explicit excludes for
+Deploy local → server with a local deploy script, not versioned (rsync `--delete` with explicit excludes for
 `Data/ Results/ Embeddings/ Models/ RagIndex/ Cache/` and a `.gitignore` filter). Three things
 to know: the server has **not** been synced since the 2026-09-15 restructure (old layout, old
 `docs/` = exactly the RAG corpus it indexed; `handover/GPU_SERVER.md` §6) and must stay so until

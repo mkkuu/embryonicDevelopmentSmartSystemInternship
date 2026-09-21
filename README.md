@@ -60,7 +60,7 @@ reference for that part of the project.
 | Aspect | Fact |
 |---|---|
 | Who | the current repository owner (Git author `mkkuu`, all 14 commits), during an internship, on the laboratory's GPU server, with an AI coding agent driven by written missions (`docs/DEVELOPMENT.md` §7); every session is logged in `docs/archive/sessions/` |
-| Added | `Training/{embeddings, evaluation, rag, orchestrator, validator, reporting, webapp_api, experiments}/`, `Training/train_balanced.py`, `Tests/`, `docs/` (except the original README), `deploy2GPUServ.sh`, `docs/corpus/`, the Istanbul PDF under `Ressources/` |
+| Added | `Training/{embeddings, evaluation, rag, orchestrator, validator, reporting, webapp_api, experiments}/`, `Training/train_balanced.py`, `Tests/`, `docs/` (except the original README), `docs/corpus/`, the Istanbul PDF under `Ressources/` |
 | Kept and used from the original code | `preProcess.py`, `DataSet.py`, `ModelBuilder.py`, `Load_data.py`, `config_args.py`, `train.py`, `train_val_test_pipline.py`: the extension imports them (composition) and trained its own ResNet18 with them |
 | Not modified | none of the original modules was edited by the extension (§3.1 rule "composition, never edition"); `WebApplication/` is untouched and now legacy (§4.8); the original `README.md` was replaced by the successor README on 2026-09-15 and is kept in Git history |
 | Dataset | the Human embryo time-lapse video dataset (Zenodo, DOI 10.5281/zenodo.7912264; creators and licence in §15), used unchanged by both parts |
@@ -354,7 +354,7 @@ legacy application, not on the current path. Both: `docs/handover/WEBAPP_GUIDE.m
 | `Ressources/` | `ISEN.jpg`, `LabISEN.png`, the Istanbul Consensus 2025 PDF (source of the corpus, referenced by `rag/validate_istanbul_corpus.py`) | resources |
 | `WebApplication/` | legacy Flask + PostgreSQL app, `.env.example`, `Dataset_shema.sql` | legacy code |
 | `Configs/config.ini` | training configuration of the original pipeline; **not read on Linux** (§5.5) | kept for the record |
-| `deploy2GPUServ.sh`, `requirements.txt`, `LICENSE`, `.gitignore` | infrastructure | — |
+| `requirements.txt`, `LICENSE`, `.gitignore` | infrastructure | — |
 
 ### 5.2 Local-only (in `.gitignore`, present on the original checkout and in the 2026-09-15 snapshot)
 

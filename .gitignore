@@ -52,6 +52,7 @@ docs/*
 
 .claude/
 CLAUDE.md
+deploy2GPUServ.sh
 deploy2GPUServ.sha
 
 # Graphify knowledge graph output (regenerable via `graphify .`; rebuilt
