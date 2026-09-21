@@ -8,6 +8,10 @@ which is not in Git — see "Source of truth" below).
 
 STATUS at hand-over: **`WAITING_FOR_VALIDATOR_V1_3B_REBENCHMARK`**.
 
+The GPU-server procedures (access, read-only diagnostics, gated launcher, restoring inputs)
+are internal to the laboratory. They are handed over separately to the successor and are not
+part of the public repository; this document calls them "the internal GPU procedures".
+
 Project origin: the original codebase and research direction (transition detection on
 time-lapse windows, the ResNet18 / TimeSformer classifier, the doctor/admin application) come
 from the 2025 paper whose first author, Aissa Benfettoume Souda (LSL team, LabISEN / ISEN Ouest),
@@ -48,7 +52,7 @@ node Tests/webapp_api/test_fixed_questions.mjs
 Expected: on the server everything passes; on a machine without `Embeddings/`, `Cache/`,
 `RagIndex/` or `Results/`, the tests that need them skip, and a handful of float-tolerance
 tests may fail (`docs/DEVELOPMENT.md` §3 lists the known ones). Then, on the server and
-read-only, check the experiment state (`GPU_SERVER.md` §3): is GPU0 free of foreign processes,
+read-only, check the experiment state (the internal GPU procedures): is GPU0 free of foreign processes,
 does a `validator_v1_3b` artefact exist?
 
 Optionally start the application on the server (`WEBAPP_GUIDE.md` §2) and ask one of the
@@ -67,7 +71,7 @@ images, the vector index and a running Ollama.
   `Tests/orchestrator/` open; read `validator/rules.py` (one function per rule).
 - The history: `docs/archive/sessions/PROJECT_CHECKPOINT.md`, newest section first, then the
   reports in `docs/archive/reports/` that `docs/archive/README.md` indexes.
-- The operational constraints: `GPU_SERVER.md`, `RAG_OPERATIONS.md`,
+- The operational constraints: the internal GPU procedures, `RAG_OPERATIONS.md`,
   `docs/REPRODUCIBILITY_GUIDE.md` §5 ("things that will silently break reproducibility").
 
 ---
@@ -95,7 +99,7 @@ Scientific code = `Training/evaluation/`, `Training/reporting/`, `Training/embed
 - [ ] Pre-register: the question, the comparison, the metric, the number of replications
       (n ≥ 3 for anything involving the LLM), the split (`val`).
 - [ ] Capture the run identity first: `cd Training && python -m orchestrator.capture_run_identity --label <label>`.
-- [ ] GPU conditions verified read-only (`GPU_SERVER.md` §3): no foreign process on GPU0; for
+- [ ] GPU conditions verified read-only (the internal GPU procedures): no foreign process on GPU0; for
       an LLM benchmark, `gpu_fraction = 1.0` after loading the model.
 - [ ] A new, unused `--run-label`; the runner refuses to overwrite an existing artefact, do not
       work around it.
@@ -137,10 +141,10 @@ built from them; also `docs/corpus/` for the Validator. Details: `RAG_OPERATIONS
 
 ## Before using the GPU server
 
-- [ ] You have read `GPU_SERVER.md` §1 (rules) and §3 (read-only diagnostics).
+- [ ] You have read the internal GPU procedures (rules and read-only diagnostics).
 - [ ] You know that GPU1–GPU7 are not yours, that GPU0 is shared with other users' jobs, and
       that no external job is ever interrupted, signalled, reniced or environment-modified.
-- [ ] You know that the server's code tree is older than Git HEAD and why (`GPU_SERVER.md` §5).
+- [ ] You know that the server's code tree is older than Git HEAD and why (the internal GPU procedures).
 - [ ] Any `rsync` toward the server is dry-run first (`rsync -n`), one source path per call.
 - [ ] Nothing under `Results/`, `Data/`, `Embeddings/` on the server is deleted or overwritten.
 
@@ -155,7 +159,7 @@ Look, in this order, and trust the most specific evidence:
    session's checkpoint with its own "next action". Local-only file.
 3. The server, read-only: `ls -la Results/evaluation/validator_experiment/` (does a
    `validator_v1_3b` artefact, `.gate.txt`, `.log` or `.pid` exist?), `nvidia-smi -i 0`,
-   `ollama ps` (`GPU_SERVER.md` §3).
+   `ollama ps` (the internal GPU procedures).
 4. `git log` on the local checkout, and `git status` for uncommitted work.
 
 If these disagree, the artefacts on the server are the fact; the documents describe intent.

@@ -148,11 +148,12 @@ and `gpu_fraction == 1.0`; it will write the label `validator_v1_3b`. The extern
 trial 31/50 on 2026-09-15 with an estimated end around 2026-09-16 20:40 CEST.
 
 **Update 2026-09-17 (read-only check of the server): still `WAITING_FOR_VALID_GPU`.** That
-external job has ended, but a new external job of the same kind (same user, same script)
+external job has ended, but a new external job of the same kind
 started on 2026-09-16 and occupies GPU0 again (≈ 6.3 GB, high utilisation); its duration is not
 predictable and it must not be interrupted. No `validator_v1_3b` artefact, gate file, log or
 process exists; `Results/evaluation/validator_experiment/` is unchanged since 2026-09-14. The
-operational procedure (diagnostics, gate, post-run checks) is in `handover/GPU_SERVER.md`.
+operational procedure (diagnostics, gate, post-run checks) is part of the internal GPU-server
+procedures, handed over separately.
 
 ## 7. Known structural limits of the benchmark
 

@@ -21,7 +21,7 @@ RAG documents and `corpus/`, but **not** `reference/` or `archive/`.
 | File | Content |
 |---|---|
 | `handover/HANDOVER.md` | first hour / day / week, checklists before touching code, experiments, benchmark, corpus, server; how to read the current state; validity of a run; recovery; source of truth |
-| `handover/GPU_SERVER.md` | shared-server rules, read-only diagnostics, valid vs CPU-offload condition, the gated v1.3b launcher, post-run checks, server tree vs HEAD, restoring inputs |
+| GPU-server procedures | internal to the laboratory (shared-server rules, diagnostics, gated v1.3b launcher, restoring inputs); handed over separately, not in the public repository |
 | `handover/RAG_OPERATIONS.md` | corpus and INCLUDED/EXCLUDED semantics, embedding model, Chroma index and manifest, retrieval and query enrichment, provenance, why the server index is older than the versioned corpus |
 | `handover/WEBAPP_GUIDE.md` | current BFF + frontend, endpoints and payloads, running it, security posture, the legacy `WebApplication/` |
 

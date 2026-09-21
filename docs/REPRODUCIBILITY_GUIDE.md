@@ -110,7 +110,7 @@ contexts); only the contexts, the grounding and the validator verdicts are deter
 - Syncing a different `docs/` tree to the server with the local deploy script (not versioned). Today the server's
   corpus and index are the 2026-08-25 ones and its code tree predates the 2026-09-15
   restructure; whether the script's `.gitignore` filter now syncs the versioned parts of `docs/`
-  has not been verified (`handover/GPU_SERVER.md` §6). Re-ingest deliberately, then re-run the
+  has not been verified (internal GPU-server procedures). Re-ingest deliberately, then re-run the
   benchmark, never as a side effect.
 - Moving modules under `Training/orchestrator/`, `validator/`, `rag/` before the pending
   Validator v1.3 rebenchmark: `capture_run_identity` hashes them by path.

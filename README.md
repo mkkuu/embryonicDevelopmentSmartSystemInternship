@@ -6,7 +6,7 @@ local, grounded question-answering application over the resulting models.
 
 This README is the entry point and the handover document of the repository. It explains the
 project; `docs/handover/HANDOVER.md` explains how a successor takes ownership; the session log
-`docs/archive/sessions/PROJECT_CHECKPOINT.md` (local-only, see §5) records the state at each
+`docs/archive/sessions/PROJECT_CHECKPOINT.md` (internal, not distributed — §5.2) records the state at each
 session. Written in English so the repository can be transferred; the application's user
 interface and the benchmark questions are in French.
 
@@ -59,7 +59,7 @@ reference for that part of the project.
 
 | Aspect | Fact |
 |---|---|
-| Who | the current repository owner (Git author `mkkuu`, all 14 commits), during an internship, on the laboratory's GPU server, with an AI coding agent driven by written missions (`docs/DEVELOPMENT.md` §7); every session is logged in `docs/archive/sessions/` |
+| Who | the current repository owner (Git author `mkkuu`, every commit), during an internship, on the laboratory's GPU server, with an AI coding agent driven by written missions (`docs/DEVELOPMENT.md` §7); every session is logged in `docs/archive/sessions/` (internal, §5.2) |
 | Added | `Training/{embeddings, evaluation, rag, orchestrator, validator, reporting, webapp_api, experiments}/`, `Training/train_balanced.py`, `Tests/`, `docs/` (except the original README), `docs/corpus/`, the Istanbul PDF under `Ressources/` |
 | Kept and used from the original code | `preProcess.py`, `DataSet.py`, `ModelBuilder.py`, `Load_data.py`, `config_args.py`, `train.py`, `train_val_test_pipline.py`: the extension imports them (composition) and trained its own ResNet18 with them |
 | Not modified | none of the original modules was edited by the extension (§3.1 rule "composition, never edition"); `WebApplication/` is untouched and now legacy (§4.8); the original `README.md` was replaced by the successor README on 2026-09-15 and is kept in Git history |
@@ -95,7 +95,7 @@ Verbatim from `docs/RESEARCH_BLUEPRINT.md` (Part I):
 
 | Item | Status on 2026-09-17 |
 |---|---|
-| Repository | HEAD `f8e64cd` = `origin/main`; this documentation pass is in the working tree, uncommitted; 5 untracked local files (§5.4) |
+| Repository | public release prepared on 2026-09-21 from the internal repository; the state described in this README is that of the 2026-09-17 documentation pass |
 | Scientific models | frozen; the served Semi-HMM has not changed since 2026-08-23 |
 | Benchmark | Q1–Q15 frozen since 2026-09-01; last valid run = Validator v1.2 OFF/ON (2026-09-12) |
 | Validator | v1.3 implemented, frozen (hashes in the gated launcher), tests pass; **not yet rebenchmarked** |
@@ -248,7 +248,8 @@ reproducible run to run; contexts, grounding verdicts and Validator verdicts are
 The project uses **at most one GPU, GPU0**, of a shared laboratory server. GPU1–GPU7 belong to
 other users. No external job is ever interrupted, signalled, reniced or inspected beyond
 read-only commands. A benchmark is valid only if the LLM sits entirely in GPU0 memory
-(`gpu_fraction = 1.0`). Full rules and commands: `docs/handover/GPU_SERVER.md`.
+(`gpu_fraction = 1.0`). The full rules and commands are internal GPU-server procedures, handed
+over separately to the successor (not part of this repository).
 
 ### 3.5 Frozen benchmark policy
 The 15 questions, their anchor (`Patient_319`, window 156, split `val`), their success criteria
@@ -334,7 +335,7 @@ legacy application, not on the current path. Both: `docs/handover/WEBAPP_GUIDE.m
 
 ## 5. Repository Structure
 
-### 5.1 Tracked (in Git, `origin/main` = `f8e64cd`)
+### 5.1 Tracked (in Git)
 
 | Path | Role | Kind |
 |---|---|---|
@@ -350,13 +351,13 @@ legacy application, not on the current path. Both: `docs/handover/WEBAPP_GUIDE.m
 | `Tests/` | 68 `test_*.py` files + 4 Node files, synthetic data / mocked dependencies only (last full run 2026-09-15: 1 218 passed, 40 skipped, 5 environment-only failures on the local machine; all pass on the server) | tests |
 | `docs/*.md` (top level) | the 6 guides + `README.md` map, and the **30 RAG documents** (frozen names) | documentation, of which 30 are a runtime input |
 | `docs/corpus/` | Istanbul Consensus 2025 transcription + traceability | runtime input of the Validator |
-| `docs/handover/` | this mission's successor documents (HANDOVER, GPU_SERVER, RAG_OPERATIONS, WEBAPP_GUIDE) | documentation |
+| `docs/handover/` | successor documents (HANDOVER, RAG_OPERATIONS, WEBAPP_GUIDE); the GPU-server procedures are internal and handed over separately | documentation |
 | `Ressources/` | `ISEN.jpg`, `LabISEN.png`, the Istanbul Consensus 2025 PDF (source of the corpus, referenced by `rag/validate_istanbul_corpus.py`) | resources |
 | `WebApplication/` | legacy Flask + PostgreSQL app, `.env.example`, `Dataset_shema.sql` | legacy code |
 | `Configs/config.ini` | training configuration of the original pipeline; **not read on Linux** (§5.5) | kept for the record |
 | `requirements.txt`, `LICENSE`, `.gitignore` | infrastructure | — |
 
-### 5.2 Local-only (in `.gitignore`, present on the original checkout and in the 2026-09-15 snapshot)
+### 5.2 Internal, not distributed (in `.gitignore`; kept on the project owner's checkout and in the 2026-09-15 snapshot)
 
 | Path | Content | Where it exists |
 |---|---|---|
@@ -367,6 +368,8 @@ legacy application, not on the current path. Both: `docs/handover/WEBAPP_GUIDE.m
 
 A fresh clone therefore has the code, the tests, the guides, the RAG corpus and the Istanbul
 corpus, but **not the session history**. `docs/handover/HANDOVER.md` says where to get it.
+Every `docs/archive/…` or `docs/reference/…` path cited in this README and in the guides is a
+provenance pointer to these internal documents; it does not resolve in a public clone.
 
 ### 5.3 Server-only (gitignored, never in Git, exist only on the GPU server + NAS backups)
 
@@ -380,9 +383,9 @@ it still has the runners inside the packages (no `Training/experiments/`), the p
 `rag/inventory.py`, and a flat `docs/` of 39 files (30 RAG documents + 9 old session files, no
 `archive/`, `reference/` or `handover/`). This is deliberate while the v1.3 rebenchmark is
 pending: the gated launcher only needs modules that were not moved. Read
-`docs/handover/GPU_SERVER.md` §5 before syncing anything.
+the internal GPU-server procedures before syncing anything.
 
-### 5.4 Untracked local files (not in Git, not deleted, not needed by anything)
+### 5.4 Untracked local files on the project owner's checkout (not in Git, not needed by anything)
 
 `.gitattributes` (a `merge=graphify` driver line for `graphify-out/graph.json`),
 `.graphifyignore` (local tooling), `new-logo-isen.png` and `Ressources/logo-LabISEN_2024.png`
@@ -400,7 +403,6 @@ deleting or versioning them is an open, non-blocking decision.
   files now live under `docs/reference/` and `docs/archive/sessions/`. Left unchanged because
   those modules are hashed into the benchmark run identity.
 - `evaluation/__init__.py` eagerly imports `plots` (matplotlib), so the web app needs matplotlib.
-- `WebApplication/.idea/` (IDE files) is tracked.
 - Lost and not recoverable: the original `Results/resnet18/` checkpoint (destroyed 2026-07-24)
   and the script that produced `Results/evaluation/gru_identity_threshold_analysis/` (never
   found; the report is kept). The whole data side lives on one server, with NAS copies.
@@ -537,7 +539,7 @@ alone unless supporting evidence is introduced.
 - The external job observed on 2026-09-13→16 finished; **a new external job of the same kind
   started on 2026-09-16 and occupies GPU0 again**. Its duration cannot be predicted. It must
   not be interrupted. (Process ids and memory figures are transient; check live with the
-  read-only commands of `docs/handover/GPU_SERVER.md` §3.)
+  read-only commands of the internal GPU-server procedures.)
 - The gated launcher (`Training/experiments/archive/validator_benchmark/launch_v1_3_gated.sh`,
   active copy `/tmp/launch_v1_3_gated.sh` on the server) refuses to start unless GPU0 carries
   no foreign process and `gpu_fraction == 1.0`; it writes label `validator_v1_3b`.
@@ -577,8 +579,8 @@ First day, in order:
    Expected: everything passes on the server; on a machine without the data, tests that need
    `Embeddings/`, `Cache/`, `RagIndex/` or `docs/corpus/` skip, and a few float-tolerance
    tests may fail (`docs/DEVELOPMENT.md` §3).
-7. Inspect the current experiment state on the server, read-only (`docs/handover/GPU_SERVER.md`
-   §3): is GPU0 free, does `validator_v1_3b` exist?
+7. Inspect the current experiment state on the server, read-only (internal GPU-server
+   procedures): is GPU0 free, does `validator_v1_3b` exist?
 8. Do not modify anything under `Training/orchestrator/`, `validator/`, `rag/` or the RAG
    documents before the v1.3b comparison exists.
 
@@ -638,9 +640,9 @@ on the frozen benchmark and a new run identity):
 
 The legacy `WebApplication/.env` (a real PostgreSQL credential) was tracked and pushed in
 July 2026. On 2026-09-15 it was untracked, ignored (`.env`, `*.env`, `WebApplication/.env`),
-replaced by `WebApplication/.env.example`, and purged from the Git history (filter-repo,
-force-push; restoration tag `pre-cleaning-2026-09-15` was created afterwards and contains no
-`.env`). **The credential itself has not been rotated**: the database host is reachable neither
+replaced by `WebApplication/.env.example`, and purged from the Git history of the internal
+repository (filter-repo); this public repository was created afterwards from the cleaned history
+and never contained it. **The credential itself has not been rotated**: the database host is reachable neither
 from the local machine nor from the GPU server, so rotation is a human action on the database
 machine (`docs/archive/audits/SECURITY_HARDENING_2026-09-15.md`). Local environment
 configuration must stay outside Git; never write a secret into a document, a commit or a chat.
@@ -681,7 +683,7 @@ dataset: CC BY-NC-SA 4.0.
 | inputs, rebuild commands, reference numbers | `docs/REPRODUCIBILITY_GUIDE.md` |
 | the 15 questions, protocol, results, Validator | `docs/BENCHMARK.md`, `docs/reference/RAG_FIXED_QUESTION_BENCHMARK.md` |
 | environment, tests, conventions, pitfalls | `docs/DEVELOPMENT.md` |
-| GPU server | `docs/handover/GPU_SERVER.md` |
+| GPU server | internal procedures, handed over separately (not in this repository) |
 | RAG corpus and index | `docs/handover/RAG_OPERATIONS.md` |
 | web application | `docs/handover/WEBAPP_GUIDE.md` |
 | everything in `docs/` | `docs/README.md` |

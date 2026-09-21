@@ -4,6 +4,13 @@ Ces 37 scripts existaient uniquement dans `/tmp` du serveur GPU du laboratoire
 jusqu'au 2026-09-15. Ils ont été copiés **bit à bit** (SHA256 vérifiés contre le manifeste du
 snapshot du 2026-09-15) sans aucune modification de contenu, avec leur nom d'origine.
 
+Seule exception, pour la publication du dépôt (2026-09-21) : dans six scripts de
+`llm_benchmark_probes/` (`analyze_bench.py`, `check_context.py`, `independent_check.py`,
+`probe2.py`, `probe_enrichment.py`, `side_effects.py`), le chemin absolu du dépôt sur le serveur
+a été remplacé par le placeholder `/path/to/embryonicDevelopmentSciMLExtension`. Aucune autre
+ligne n'a changé ; ces six fichiers ne correspondent donc plus aux SHA256 du manifeste du
+snapshot, qui reste la référence bit à bit.
+
 - **Aucun de ces scripts n'est importé ni exécuté par l'application** (`Training/webapp_api`,
   `Training/reporting`, `Training/orchestrator`) ni par les tests. Ils ne font partie d'aucun
   chemin d'exécution de production.

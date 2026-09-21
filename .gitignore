@@ -23,6 +23,7 @@ __pycache__/
 .pytest_cache/
 
 .vscode/
+.idea/
 
 # docs/ is local-only by default (session logs, audits, historical reports),
 # with two runtime exceptions a fresh clone genuinely cannot work without:

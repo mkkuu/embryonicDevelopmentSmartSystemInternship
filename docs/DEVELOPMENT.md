@@ -9,7 +9,7 @@ how to reproduce results, `REPRODUCIBILITY_GUIDE.md`.
 | | Local checkout | GPU server |
 |---|---|---|
 | Path | `~/Projects/embryonicDevelopmentSciMLExtension` | the laboratory's GPU server, under the project account: `~/projects/embryonicDevelopmentSciMLExtension` |
-| Git | the real repository (`origin` = private GitHub) | **not a working Git clone** (stuck at the Init commit); it is fed by `rsync` only |
+| Git | the real repository (`origin` = GitHub) | **not a working Git clone** (stuck at the Init commit); it is fed by `rsync` only |
 | Data / results | none (`Data/`, `Results/`, `Embeddings/`, `RagIndex/`, `Cache/` are gitignored) | all of them live here, only here (backups: the laboratory NAS) |
 | Python | no GPU, compiled wheels need `LD_LIBRARY_PATH=/run/current-system/sw/share/nix-ld/lib` on this NixOS machine | `~/miniconda3/envs/embryo_env/bin/python` (torch 2.6 + CUDA), call it by full path: non-interactive SSH does not source conda |
 | LLM | none | Ollama system service (`ollama serve`, `http://localhost:11434`), pinned to GPU0 |
@@ -17,7 +17,7 @@ how to reproduce results, `REPRODUCIBILITY_GUIDE.md`.
 Deploy local → server with a local deploy script, not versioned (rsync `--delete` with explicit excludes for
 `Data/ Results/ Embeddings/ Models/ RagIndex/ Cache/` and a `.gitignore` filter). Three things
 to know: the server has **not** been synced since the 2026-09-15 restructure (old layout, old
-`docs/` = exactly the RAG corpus it indexed; `handover/GPU_SERVER.md` §6) and must stay so until
+`docs/` = exactly the RAG corpus it indexed; internal GPU-server procedures) and must stay so until
 the v1.3b comparison; `docs/` is now partly versioned (`docs/README.md`), and whether the
 script's `.gitignore` filter syncs those parts has not been verified; and always dry-run
 (`rsync -n`) before trusting a `--delete` invocation — a wrong exclude destroyed the server's
