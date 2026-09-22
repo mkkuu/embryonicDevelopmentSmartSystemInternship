@@ -96,6 +96,62 @@ Numbers, confidence intervals and limits: `docs/SCIENTIFIC_BACKGROUND.md` and `d
 
 Data, trained models, embeddings, the vector index and caches are not distributed.
 
+## Getting started
+
+### Prerequisites
+
+- Python 3.10 and the packages of `requirements.txt` (PyTorch, Flask, ChromaDB,
+  sentence-transformers, …). Tests need nothing else.
+- To run the application: a local [Ollama](https://ollama.com) service on
+  `http://localhost:11434` with the model named by `LLM_MODEL` already pulled (default
+  `llama3.2:latest`), and the inputs that are not distributed, placed at the repository root:
+  the dataset under `Data/`, the trained classifier and the frozen Semi-HMM under `Results/`,
+  the embedding cache under `Embeddings/`, the vector index under `RagIndex/`. They are rebuilt
+  in the order given by `docs/REPRODUCIBILITY_GUIDE.md` §3 (dataset, classifier, embeddings,
+  RAG index); training the classifier and extracting the embeddings need a GPU, the rest
+  runs on CPU.
+
+### Environment
+
+```bash
+conda create -n embryo_env python=3.10
+conda activate embryo_env
+pip install -r requirements.txt
+pytest Tests/                    # from the repository root, not Training/
+```
+
+### Running the application
+
+Every command runs from `Training/`: the modules resolve `Data/`, `Results/`, `Embeddings/`
+and `RagIndex/` relative to it.
+
+```bash
+cd Training
+python -m reporting.warm_cache --split val   # optional: pre-fills the inference cache
+python -m webapp_api.app                     # http://localhost:8001
+```
+
+`LLM_MODEL` and `LLM_TIMEOUT_SECONDS` (default 120 s) select the generative model and its
+per-question budget; the other variables are listed in `docs/ARCHITECTURE.md` §3. The
+standalone Reporting API (`python -m reporting.api`, port 8000) is optional: the application
+calls the same functions in-process.
+
+### Using the interface
+
+Open `http://localhost:8001`. The page lists the patients of the `val` split; selecting one
+shows the phase timeline, the frame viewer, the 15 frozen questions and a free-text chat. The
+`test` split is refused by every layer. If Ollama is unreachable, the chat returns an explicit
+fallback answer instead of failing.
+
+### Where to start
+
+1. `docs/handover/HANDOVER.md` — the first hour, day and week of a newcomer.
+2. `docs/ARCHITECTURE.md` — what runs, how the layers are wired, what is legacy.
+3. `docs/SCIENTIFIC_BACKGROUND.md` — the established results and their limits.
+4. `docs/DEVELOPMENT.md` — conventions and known pitfalls before changing code.
+5. `docs/handover/WEBAPP_GUIDE.md` and `docs/handover/RAG_OPERATIONS.md` — operating the
+   application and its index.
+
 ## Reproducibility
 
 - `docs/REPRODUCIBILITY_GUIDE.md` — inputs, rebuild order, reference numbers.
